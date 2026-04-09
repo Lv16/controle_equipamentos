@@ -1,15 +1,15 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Header from './components/Layout/Header';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Sistema de Controle de Equipamentos</h1>
-      </header>
+      <Header title="Sistema de Controle de Equipamentos" />
     </div>
   );
 }
 
 export default App;
+
