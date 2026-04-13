@@ -5,7 +5,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ title }) => {
     return (
         <header style={{
-          backgroundColor: '#282c34',
+          backgroundColor: '#0d4c94',
           color: 'white',
           padding: '20px',
           textAlign: 'center'

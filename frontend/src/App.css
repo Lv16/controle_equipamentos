@@ -4,7 +4,7 @@
 }
 
 .navbar {
-  background-color: #282c34;
+  background-color: #0d4c94;
   padding: 0;
   position: sticky;
   top: 0;
@@ -34,12 +34,12 @@
 }
 
 .navbar a:hover {
-  background-color: #0066cc;
+  background-color: #0a3a75;
   color: #fff;
 }
 
 .navbar a.active {
-  background-color: #0066cc;
+  background-color: #0a3a75;
   border-bottom: 3px solid #00d4ff;
 }
 
