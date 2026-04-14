@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateProducaoDto } from './dto/create-producao.dto';
 import { UpdateProducaoDto } from './dto/update-producao.dto';
 import { CreateObservacaoDto } from './dto/create-observacao.dto';
+import { UpdateTagDto } from './dto/update-tag.dto';
 import { ProducoesService } from './producoes.service';
 
 @ApiTags('Produções')
@@ -60,6 +61,12 @@ export class ProducoesController {
     })
     update(@Param('id') id: string, @Body() body: UpdateProducaoDto) {
         return this.producoesService.update(id, body);
+    }
+
+    @Patch(':id/tag')
+    @ApiOperation({ summary: 'Cadastrar ou atualizar a TAG do equipamento' })
+    updateTag(@Param('id') id: string, @Body() body: UpdateTagDto) {
+        return this.producoesService.updateTag(id, body);
     }
 
     @Delete(':id')

@@ -1,12 +1,12 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
 const TIMEOUT = parseInt(process.env.REACT_APP_TIMEOUT || '5000', 10);
 
 export const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_URL,
   timeout: TIMEOUT,
-  withCredentials: true,
+  withCredentials: false,
   headers: {
     'Content-Type': 'application/json',
   },

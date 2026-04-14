@@ -1,8 +1,9 @@
-import { ConflictException, Injectable, NotFoundException  } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException  } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProducaoDto } from './dto/create-producao.dto';
 import { UpdateProducaoDto } from './dto/update-producao.dto';
 import { CreateObservacaoDto } from './dto/create-observacao.dto';
+import { UpdateTagDto } from './dto/update-tag.dto';
 import { Prisma, StatusProducao } from '@prisma/client';
 
 @Injectable()
@@ -246,6 +247,46 @@ export class ProducoesService {
                 criadoEm: 'desc',
             }
         })
+    }
+
+    async updateTag(id: string, data: UpdateTagDto) {
+        const equipment = await this.findOne(id);
+
+        if (equipment.statusProducao !== 'CONCLUIDA') {
+            throw new BadRequestException(
+                'A TAG só pode ser cadastrada quando a produção estiver concluida',
+            )
+        }
+
+        const existenteComTag = await this.prisma.equipment.findFirst({
+            where: {
+                tag: data.tag,
+                NOT: {
+                    id,
+                },
+            },
+        });
+
+        if (existenteComTag) {
+            throw new ConflictException('Esta TAG já cadastrada em outro equipamento');
+        }
+
+        const equipamentoAtulizado = await this.prisma.equipment.update({
+            where: { id },
+            data: {
+                tag: data.tag,
+            },
+            include: {
+                itensSeriados: true,
+                observacoes: {
+                    orderBy: {
+                        criadoEm: 'desc',
+                    },
+                },
+            },
+        });
+
+        return this.adicionarDiasProducao(equipamentoAtulizado);
     }
 
     async remove(id: string) {

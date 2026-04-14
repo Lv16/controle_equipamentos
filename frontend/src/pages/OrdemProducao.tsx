@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import axiosInstance from '../services/axiosConfig';
+import React, { useState } from 'react';
+import { useProducoesMock } from '../hooks/useProducoesMock';
 import { Producao } from '../types/producao';
 import './OrdemProducao.css';
 
@@ -9,26 +9,8 @@ interface SelectedProducao {
 }
 
 const OrdemProducao: React.FC = () => {
-  const [producoes, setProducoes] = useState<Producao[]>([]);
+  const { producoes, loading, error } = useProducoesMock();
   const [selected, setSelected] = useState<SelectedProducao | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchProducoes = async () => {
-      try {
-        setLoading(true);
-        const response = await axiosInstance.get('/producoes');
-        setProducoes(response.data);
-        setError(null);
-      } catch (err: any) {
-        setError(err.message || 'Erro ao carregar produções');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProducoes();
-  }, []);
 
   const handleSelectProducao = (producao: Producao) => {
     setSelected({

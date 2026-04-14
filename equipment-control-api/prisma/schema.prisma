@@ -16,6 +16,7 @@ model Equipment {
   numeroOrdem                       Int                                       @unique @default(autoincrement())
   numeroSerieBase                   String?
   numeroSerie                       String?   
+  tag                               String?                                   @unique
   dataSolicitacao                   DateTime? 
   dataInicio                        DateTime?
   dataTermino                       DateTime?
@@ -55,7 +56,17 @@ model ObservacaoProducao {
   id          String        @id @default(uuid())
   producaoId  String
   descricao   String
-  criadoEm    DateTime    @default(now())
+  criadoEm    DateTime      @default(now())
 
-  equipment   Equipment   @relation(fields: [producaoId], references: [id], onDelete: Cascade)
+  equipment   Equipment     @relation(fields: [producaoId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id                      String                            @id @default(uuid())
+  nome                    String        
+  email                   String                            @unique
+  senha                   String        
+  ativo                   Boolean                           @default(true)
+  precisaTrocarSenha      Boolean                           @default(true)
+  criadoEm                DateTime                          @default(now())   
 }
