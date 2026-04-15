@@ -56,7 +56,7 @@ export const usePdfExport = () => {
                     await new Promise((resolve) => {
                         reader.onload = () => {
                             const logoData = reader.result as string;
-                            pdf.addImage(logoData, 'PNG', marginLeft, yPosition - 8, 18, 18);
+                            pdf.addImage(logoData, 'PNG', 20, yPosition - 13, 30, 20);
                             resolve(null);
                         };
                         reader.readAsDataURL(blob);
@@ -68,7 +68,7 @@ export const usePdfExport = () => {
 
             // Cabeçalho
             pdf.setFontSize(14);
-            pdf.text('ORDEM DE PRODUÇÃO', pageWidth / 2 + 5, yPosition, { align: 'center' });
+            pdf.text('ORDEM DE PRODUÇÃO', pageWidth / 2, yPosition, { align: 'center' });
             
             pdf.setFontSize(9);
             pdf.text('FOR-MAN-007 - Rev. 4', pageWidth - marginRight - 5, yPosition, { align: 'right' });
@@ -86,7 +86,7 @@ export const usePdfExport = () => {
                 pdf.setFillColor(178, 204, 33);
                 pdf.rect(marginLeft, yPosition, maxWidth, 7, 'F');
                 pdf.text(title, marginLeft + 2, yPosition + 4.5);
-                yPosition += 10;
+                yPosition += 14;
             };
 
             const addField = (label: string, value: string) => {
@@ -116,6 +116,19 @@ export const usePdfExport = () => {
             const descricaoLines = pdf.splitTextToSize(producao.descricao, maxWidth - 6);
             pdf.text(descricaoLines, marginLeft + 3, yPosition);
             yPosition += descricaoLines.length * 5 + 5;
+
+            // Itens Serializados
+            if (producao.itensSeriados && producao.itensSeriados.length > 0) {
+                addSection('ITENS SERIALIZADOS');
+                pdf.setFontSize(9);
+                
+                producao.itensSeriados.forEach((item) => {
+                    const itemLines = pdf.splitTextToSize(item.descricao, maxWidth - 6);
+                    pdf.text(itemLines, marginLeft + 3, yPosition);
+                    yPosition += itemLines.length * 4 + 2;
+                });
+                yPosition += 3;
+            }
 
             // Documentos Relacionados
             addSection('DOCUMENTOS RELACIONADOS');

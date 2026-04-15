@@ -10,6 +10,23 @@ const MOCK_PRODUCOES: Producao[] = [
     modelo: 'CSEX420ACM',
     dataSolicitacao: '18/03/2026',
     descricao: 'EXAUSTOR 420 MONOFÁSICO - 220V 50/60 Hz',
+    itensSeriados: [
+      {
+        id: '1-1',
+        numero: 'CSEX420ACM-0559-1',
+        descricao: 'CSEX420 MONOFÁSICO - W22Xdb – carcaça 80 – 1,1 kW (1,5 cv) – 220 Vca – 50/60 Hz – 2 pólos',
+      },
+      {
+        id: '1-2',
+        numero: 'CSEX420ACM-0559-2',
+        descricao: 'CSEX420 MONOFÁSICO - Boteira BTEx 56571/015 (TRAMONTINA)',
+      },
+      {
+        id: '1-3',
+        numero: 'CSEX420ACM-0559-3',
+        descricao: 'CSEX420 MONOFÁSICO - PCX PRE316PB (APPLETON)',
+      },
+    ],
     listaPecas: true,
     sequencialMontagem: true,
     inspecaoMontagem: true,
@@ -22,6 +39,18 @@ const MOCK_PRODUCOES: Producao[] = [
     modelo: 'CSEX320ACM',
     dataSolicitacao: '19/03/2026',
     descricao: 'EXAUSTOR 320 MONOFÁSICO - W222xdb Carcaça 80 - 1,1 kW',
+    itensSeriados: [
+      {
+        id: '2-1',
+        numero: 'CSEX320ACM-0560-1',
+        descricao: 'CSEX320 MONOFÁSICO - W22Xdb – carcaça 71 – 0,75 kW (1 cv) – 220 Vca – 50/60 Hz – 2 pólos',
+      },
+      {
+        id: '2-2',
+        numero: 'CSEX320ACM-0560-2',
+        descricao: 'CSEX320 MONOFÁSICO - Chave ALW 1.5/3 (SCHNEIDER)',
+      },
+    ],
     listaPecas: true,
     sequencialMontagem: true,
     inspecaoMontagem: true,
@@ -34,6 +63,23 @@ const MOCK_PRODUCOES: Producao[] = [
     modelo: 'CVA500ACM',
     dataSolicitacao: '20/03/2026',
     descricao: 'CENTRÍFUGO 500 MONOFÁSICO - Boteira BTEx 56571/015',
+    itensSeriados: [
+      {
+        id: '3-1',
+        numero: 'CVA500ACM-0561-1',
+        descricao: 'CVA500 MONOFÁSICO - Motor 2 cv – 3600 rpm – 110/220 Vca – Eixo 14 mm',
+      },
+      {
+        id: '3-2',
+        numero: 'CVA500ACM-0561-2',
+        descricao: 'CVA500 MONOFÁSICO - Rotor 500 mm – carcaça alumínio – classe F',
+      },
+      {
+        id: '3-3',
+        numero: 'CVA500ACM-0561-3',
+        descricao: 'CVA500 MONOFÁSICO - Rolamento 6205 2Z SKF',
+      },
+    ],
     listaPecas: true,
     sequencialMontagem: true,
     inspecaoMontagem: false,
@@ -44,7 +90,6 @@ const MOCK_PRODUCOES: Producao[] = [
 export const useProducoesMock = () => {
   const [producoes, setProducoes] = useState<Producao[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Simula delay de carregamento
@@ -56,5 +101,5 @@ export const useProducoesMock = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  return { producoes, loading, error };
+  return { producoes, loading, error: null };
 };

@@ -5,6 +5,7 @@ export interface CreateProducaoDto {
   dataSolicitacao: string;
   modelo: string;
   descricao: string;
+  itensSeriados: ItemSeriado[];
   listaPecas: boolean;
   sequencialMontagem: boolean;
   inspecaoMontagem: boolean;
