@@ -20,6 +20,23 @@ export class ProducoesService {
         return `${numeroSerieBase}-${numeroOrdem}`;
     }
 
+    private montarDescricao(
+        nomeTipoEquipamento?: string | null,
+        descricaoComplemento?: string | null,
+    ): string | null {
+        if (!nomeTipoEquipamento && !descricaoComplemento) {
+            return null;
+        }
+        if (!nomeTipoEquipamento) {
+            return descricaoComplemento?.trim() || null;
+        }
+        if (!descricaoComplemento) {
+            return nomeTipoEquipamento.trim();
+        }
+        
+        return `${nomeTipoEquipamento.trim()} ${descricaoComplemento?.trim() || ''}`;
+    }
+
     private calcularDiasProducao(
         dataInicio?: Date | null,
         dataTermino?: Date| null,
@@ -55,6 +72,19 @@ export class ProducoesService {
 
     async create(data: CreateProducaoDto) {
         try {
+            let tipoEquipamentoNome: string | null = null;
+
+            if (data.tipoEquipamentoId) {
+                const tipoEquipamento = await this.prisma.tipoEquipamento.findUnique({
+                    where: { id: data.tipoEquipamentoId },
+                });
+
+                if (!tipoEquipamento) {
+                    throw new NotFoundException('Tipo de equipamento não encontrado');
+                }
+                
+                tipoEquipamentoNome = tipoEquipamento.nome;
+            }
         const producaoCriada = await this.prisma.equipment.create({
             data: {
                 numeroSerieBase: data.numeroSerieBase,
@@ -69,7 +99,10 @@ export class ProducoesService {
                 : null,
                 tipoEquipamentoId: data.tipoEquipamentoId,
                 modelo: data.modelo,
-                descricao: data.descricao,
+                descricao: this.montarDescricao(
+                    tipoEquipamentoNome,
+                    data.descricaoComplemento,
+                ),
                 listaPecas: data.listaPecas ?? false,
                 sequenciaMontagem: data.sequenciaMontagem ?? false,
                 inspecaoMontagem: data.inspecaoMontagem ?? false,
@@ -181,6 +214,30 @@ export class ProducoesService {
        const producaoAtual = await this.findOne(id);
        const numeroSerieBaseFinal = 
         data.numeroSerieBase ?? producaoAtual.numeroSerieBase  ?? undefined;
+       const tipoEquipamentoIdFinal = 
+        data.tipoEquipamentoId ?? producaoAtual.tipoEquipamentoId ?? undefined;
+
+       let tipoEquipamentoNome: string | null = null;
+
+       if (tipoEquipamentoIdFinal) {
+            const tipoEquipamento = await this.prisma.tipoEquipamento.findUnique({
+                where: { id: tipoEquipamentoIdFinal },
+            });
+
+            if (!tipoEquipamento) {
+                throw new NotFoundException('Tipo de equipamento não encontrado');
+            }
+
+            tipoEquipamentoNome = tipoEquipamento.nome;
+        }
+
+        const descricaoComplementoAtual = 
+            producaoAtual.descricao && tipoEquipamentoNome
+            ? producaoAtual.descricao.replace(tipoEquipamentoNome, '').trim()
+            : '';
+        
+        const descricaoComplementoFinal =
+            data.descricaoComplemento ?? descricaoComplementoAtual;
 
         try{
             return this.prisma.equipment.update({
@@ -203,7 +260,10 @@ export class ProducoesService {
                     statusProducao: data.statusProducao,
                     tipoEquipamentoId: data.tipoEquipamentoId,
                     modelo: data.modelo,
-                    descricao: data.descricao,
+                    descricao: this.montarDescricao(
+                        tipoEquipamentoNome,
+                        data.descricaoComplemento,
+                    ),
                     listaPecas: data.listaPecas,
                     sequenciaMontagem: data.sequenciaMontagem,
                     inspecaoMontagem: data.inspecaoMontagem,

@@ -55,7 +55,7 @@ export class CreateProducaoDto {
     @ApiPropertyOptional({ example: 'Descrição do equipamento' })
     @IsOptional()
     @IsString()
-    descricao?: string;
+    descricaoComplemento?: string;
 
     @ApiPropertyOptional({ example: true })
     @IsOptional()
