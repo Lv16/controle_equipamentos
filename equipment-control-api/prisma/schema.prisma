@@ -37,6 +37,7 @@ model Equipment {
 
   itensSeriados                     ItemSeriado[]
   observacoes                       ObservacaoProducao[]
+  registrosInspecaoMontagem         RegistroInspecaoMontagem[]
 }
 
 model ItemSeriado {
@@ -81,4 +82,56 @@ model TipoEquipamento {
   atualizadoEm      DateTime        @updatedAt
 
   equipments Equipment[]
+}
+
+model RegistroInspecaoMontagem {
+  id                  String      @id @default(uuid())
+  equipmentId         String      
+  ordem               Int
+  valorObservado      String?  
+  instrumentoMedicao  String?
+  conformidades       Boolean?
+  criadoEm            DateTime  @default(now())
+  atualizadoEm        DateTime  @updatedAt
+
+  equipment           Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+
+  @@unique([equipmentId, ordem])
+}
+
+enum OrigemManutencao {
+  SYNCHRO
+  MANUAL
+}
+
+enum StatusManutencao {
+  PENDENTE
+  EM_MANUTENCAO
+  CONCLUIDA
+}
+
+model Manutencao {
+  id                      String        @id @default(uuid())
+  origem                  OrigemManutencao      @default(SYNCHRO)
+
+  tipoEquipamentoNome     String?
+  modeloEquipamento       String?
+  numeroSerie             String?
+  tag                     String?
+  situacaoEquipamento     String?
+
+  dataRetornoBase         DateTime?
+  dataInicio              DateTime?
+  dataTermino             DateTime?
+
+  statusManutencao        StatusManutencao    @default(PENDENTE)
+  diagnostico             String?
+  responsavelManutencao   String?
+
+  criadoEm                DateTime            @default(now())
+  atualizadoEm            DateTime            @updatedAt
+  
+  @@index([numeroSerie])
+  @@index([tag])
+
 }

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 import Header from './components/Layout/Header';
 import OrdemProducao from './pages/OrdemProducao';
+import InspecaoMontagem from './pages/InspecaoMontagem';
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
 
         <Routes>
           <Route path="/" element={<OrdemProducao />} />
-          <Route path="/inspecao" element={<div>Inspeção de Montagem (em desenvolvimento)</div>} />
+          <Route path="/inspecao" element={<InspecaoMontagem />} />
           <Route path="/manutencao" element={<div>Manutenção (em desenvolvimento)</div>} />
           <Route path="/historico" element={<div>Histórico (em desenvolvimento)</div>} />
         </Routes>

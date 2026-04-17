@@ -23,7 +23,7 @@ export const PdfExporter: React.FC<PdfExporterProps> = ({
     <button 
       onClick={handleExport}
       style={{
-        backgroundColor: '#0d4c94',
+        backgroundColor: '#FF1C20',
         color: 'white',
         padding: '10px 20px',
         border: 'none',

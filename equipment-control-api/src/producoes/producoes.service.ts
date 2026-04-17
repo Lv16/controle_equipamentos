@@ -4,6 +4,7 @@ import { CreateProducaoDto } from './dto/create-producao.dto';
 import { UpdateProducaoDto } from './dto/update-producao.dto';
 import { CreateObservacaoDto } from './dto/create-observacao.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
+import { UpdateRegistroInspecaoDto } from './dto/update-registro-inspecao.dto';
 import { Prisma, StatusProducao } from '@prisma/client';
 
 @Injectable()
@@ -114,9 +115,12 @@ export class ProducoesService {
                     data.itensSeriados?.map((item) => ({
                         descricao: item.descricao,
                     })) ?? [],
-                
-                
                 },
+                registrosInspecaoMontagem: {
+                    create: Array.from({ length: 16 }, (_, index) => ({
+                        ordem: index + 1,
+                    })),
+                }
             },
         });
 
@@ -134,9 +138,14 @@ export class ProducoesService {
                     observacoes: {
                         orderBy: {
                             criadoEm: 'desc',
-                        }
-                    }
-                }
+                        },
+                    },
+                    registrosInspecaoMontagem: {
+                        orderBy: {
+                            ordem: 'asc',
+                        },
+                    },
+                },
             });
 
             return this.adicionarDiasProducao(producaoFinal);
@@ -160,6 +169,11 @@ export class ProducoesService {
                 observacoes: {
                     orderBy: {
                         criadoEm: 'desc',
+                    },
+                },
+                registrosInspecaoMontagem: {
+                    orderBy: {
+                        ordem: 'asc',
                     }
                 }
             },
@@ -180,6 +194,11 @@ export class ProducoesService {
                 observacoes: {
                     orderBy: {
                         criadoEm: 'desc',
+                    },
+                },
+                registrosInspecaoMontagem: {
+                    orderBy: {
+                        ordem: 'asc',
                     }
                 }
             },
@@ -200,8 +219,14 @@ export class ProducoesService {
                 observacoes: {
                     orderBy: {
                         criadoEm: 'desc',
-                    }
-                }
+                    },
+                },
+                registrosInspecaoMontagem: {
+                    orderBy: {
+                        ordem: 'asc',
+                    },
+                },
+
             },
         });
         if (!producao) {
@@ -277,8 +302,14 @@ export class ProducoesService {
                     observacoes: {
                         orderBy: {
                             criadoEm: 'desc',
-                        }
-                    }
+                        },
+                    },
+                    registrosInspecaoMontagem: {
+                        orderBy: {
+                            ordem: 'asc',
+                        },
+                    },
+
                 },
             });
         } catch (error) {
@@ -351,10 +382,62 @@ export class ProducoesService {
                         criadoEm: 'desc',
                     },
                 },
+                registrosInspecaoMontagem: {
+                    orderBy: {
+                        ordem: 'asc',
+                    }
+                }
             },
         });
 
         return this.adicionarDiasProducao(equipamentoAtulizado);
+    }
+
+    async listRegistrosInspecaoMontagem(id: string) {
+        await this.findOne(id);
+
+        return this.prisma.registroInspecaoMontagem.findMany({
+            where: {
+                equipmentId: id,
+            },
+            orderBy: {
+                ordem: 'asc',
+            },
+        });
+    }
+
+    async updateRegistroInspecaoMontagem(
+        equipmentId: string,
+        ordem: number,
+        data: UpdateRegistroInspecaoDto,
+    ) {
+        await this.findOne(equipmentId);
+
+        const registro = await this.prisma.registroInspecaoMontagem.findUnique({
+            where: {
+                equipmentId_ordem:{
+                    equipmentId,
+                    ordem,
+                },
+            },
+        });
+
+        if (!registro) {
+            throw new NotFoundException('Registro de inspeção não encontrada');
+        }
+        return this.prisma.registroInspecaoMontagem.update({
+            where: {
+                equipmentId_ordem: {
+                    equipmentId,
+                    ordem,
+                },
+            },
+            data: {
+                valorObservado: data.valorObservado,
+                instrumentoMedicao: data.instrumentoMedicao,
+                conformidades: data.conformidades,
+            },
+        });
     }
 
     async remove(id: string) {

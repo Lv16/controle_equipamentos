@@ -1,0 +1,164 @@
+.formulario-inspecao {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.formulario-inspecao h2 {
+  margin-bottom: 20px;
+  color: #333;
+  border-bottom: 2px solid #B2CC21;
+  padding-bottom: 10px;
+}
+
+.formulario-inspecao .form-section {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 5px;
+  border-left: 4px solid #B2CC21;
+}
+
+.formulario-inspecao .form-section h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: #333;
+  font-size: 16px;
+}
+
+.formulario-inspecao .form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.formulario-inspecao .form-grid div {
+  display: flex;
+  flex-direction: column;
+}
+
+.formulario-inspecao label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #555;
+  font-size: 13px;
+}
+
+.formulario-inspecao input[type="text"],
+.formulario-inspecao input[type="date"],
+.formulario-inspecao textarea,
+.formulario-inspecao select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+.formulario-inspecao textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.formulario-inspecao .items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px 0;
+}
+
+.formulario-inspecao .items-list li {
+  background: white;
+  padding: 8px 12px;
+  margin-bottom: 5px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 3px solid #B2CC21;
+  font-size: 13px;
+}
+
+.formulario-inspecao .btn-remove {
+  background: #cc4444;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-left: 10px;
+}
+
+.formulario-inspecao .btn-remove:hover {
+  background: #aa2222;
+}
+
+.formulario-inspecao .add-item {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.formulario-inspecao .add-item input,
+.formulario-inspecao .add-item select {
+  flex: 1;
+  min-width: 150px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.formulario-inspecao .btn-add {
+  background: #B2CC21;
+  color: #333;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.formulario-inspecao .btn-add:hover {
+  background: #9db01a;
+}
+
+.formulario-inspecao .form-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+  justify-content: flex-end;
+}
+
+.formulario-inspecao .btn-salvar,
+.formulario-inspecao .btn-cancelar {
+  padding: 10px 25px;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.formulario-inspecao .btn-salvar {
+  background: #B2CC21;
+  color: #333;
+}
+
+.formulario-inspecao .btn-salvar:hover {
+  background: #9db01a;
+}
+
+.formulario-inspecao .btn-cancelar {
+  background: #ddd;
+  color: #333;
+}
+
+.formulario-inspecao .btn-cancelar:hover {
+  background: #ccc;
+}

@@ -4,6 +4,7 @@ import { CreateProducaoDto } from './dto/create-producao.dto';
 import { UpdateProducaoDto } from './dto/update-producao.dto';
 import { CreateObservacaoDto } from './dto/create-observacao.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
+import { UpdateRegistroInspecaoDto } from './dto/update-registro-inspecao.dto';
 import { ProducoesService } from './producoes.service';
 
 @ApiTags('Produções')
@@ -53,6 +54,12 @@ export class ProducoesController {
         return this.producoesService.findOne(id);
     }
 
+    @Get(':id/inspecao-montagem')
+    @ApiOperation({ summary: 'Listar os 16 registros da inspecao de montagem do equipamento ' })
+    listRegistrosInspecaoMontagem(@Param('id') id: string) {
+        return this.producoesService.listRegistrosInspecaoMontagem(id);
+    }
+
     @Put(':id')
     @ApiOperation({ summary: 'Atualizar uma produção existente' })
     @ApiParam({
@@ -69,10 +76,19 @@ export class ProducoesController {
         return this.producoesService.updateTag(id, body);
     }
 
+    @Patch(':id/inspecao-montagem/:ordem')
+    @ApiOperation({ summary: 'Atualizar um registro da inspeção de montagem pela ordem' })
+    updateRegistroInspecaoMontagem(
+        @Param('id') id: string,
+        @Param('ordem', ParseIntPipe) ordem: number,
+        @Body() body: UpdateRegistroInspecaoDto,
+    ) {
+        return this.producoesService.updateRegistroInspecaoMontagem(id, ordem, body);
+    }
+
     @Delete(':id')
     @ApiOperation({ summary: 'Excluir uma produção' })
     remove(@Param('id') id: string) {
         return this.producoesService.remove(id);
     }
 }
-

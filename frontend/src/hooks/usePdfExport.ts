@@ -46,23 +46,20 @@ export const usePdfExport = () => {
             
             let yPosition = 15;
 
-            // Adicionar logo
+            // Logo
             if (logoPath) {
                 try {
-                    const response = await fetch(logoPath);
-                    const blob = await response.blob();
-                    const reader = new FileReader();
-                    
+                    const img = new Image();
+                    img.src = logoPath;
                     await new Promise((resolve) => {
-                        reader.onload = () => {
-                            const logoData = reader.result as string;
-                            pdf.addImage(logoData, 'PNG', 20, yPosition - 13, 30, 20);
-                            resolve(null);
+                        img.onload = () => {
+                            pdf.addImage(img, 'PNG', marginLeft, yPosition + 2, 27, 20);
+                            resolve(undefined);
                         };
-                        reader.readAsDataURL(blob);
                     });
-                } catch (err) {
-                    console.warn('Erro ao carregar logo:', err);
+                    yPosition += 15;
+                } catch (e) {
+                    console.error('Erro ao adicionar logo:', e);
                 }
             }
 
@@ -89,15 +86,13 @@ export const usePdfExport = () => {
                 yPosition += 14;
             };
 
-            const addField = (label: string, value: string) => {
+            const addField = (label: string, value: string | number) => {
                 pdf.setFontSize(9);
                 const labelWidth = maxWidth * 0.35;
                 const valueX = marginLeft + labelWidth;
                 
                 pdf.text(label + ':', marginLeft + 3, yPosition);
-                
-                const valueLines = pdf.splitTextToSize(value, maxWidth * 0.6);
-                pdf.text(valueLines, valueX, yPosition);
+                pdf.text(String(value), valueX, yPosition);
                 
                 yPosition += 6;
             };
@@ -120,46 +115,34 @@ export const usePdfExport = () => {
             // Itens Serializados
             if (producao.itensSeriados && producao.itensSeriados.length > 0) {
                 addSection('ITENS SERIALIZADOS');
-                pdf.setFontSize(9);
                 
                 producao.itensSeriados.forEach((item) => {
-                    const itemLines = pdf.splitTextToSize(item.descricao, maxWidth - 6);
-                    pdf.text(itemLines, marginLeft + 3, yPosition);
-                    yPosition += itemLines.length * 4 + 2;
+                    const itemDescLines = pdf.splitTextToSize(item.descricao, maxWidth - 4);
+                    
+                    pdf.setFontSize(8);
+                    itemDescLines.forEach((line: string) => {
+                        pdf.text('• ' + line, marginLeft + 5, yPosition);
+                        yPosition += 3.5;
+                    });
+                    yPosition += 1;
                 });
-                yPosition += 3;
+                yPosition += 2;
             }
 
-            // Documentos Relacionados
-            addSection('DOCUMENTOS RELACIONADOS');
-            pdf.setFontSize(9);
-            
-            if (producao.listaPecas) {
-                const listaLines = pdf.splitTextToSize('✓ Lista de Peças - DM-' + producao.modelo, maxWidth - 6);
-                pdf.text(listaLines, marginLeft + 3, yPosition);
-                yPosition += listaLines.length * 5;
+            // Observações
+            if (producao.observacoes) {
+                addSection('OBSERVAÇÕES');
+                pdf.setFontSize(9);
+                
+                const obsLines = pdf.splitTextToSize(producao.observacoes, maxWidth - 6);
+                obsLines.forEach((line: string) => {
+                    pdf.text(line, marginLeft + 3, yPosition);
+                    yPosition += 4;
+                });
             }
-            if (producao.sequencialMontagem) {
-                const seqLines = pdf.splitTextToSize('✓ Sequencial de Montagem - ' + producao.modelo.substring(0, 8), maxWidth - 6);
-                pdf.text(seqLines, marginLeft + 3, yPosition);
-                yPosition += seqLines.length * 5;
-            }
-            if (producao.inspecaoMontagem) {
-                const inspLines = pdf.splitTextToSize('✓ Inspeção de Montagem - FOR-MAN-006 (x) FOR-MAN-057 ( )', maxWidth - 6);
-                pdf.text(inspLines, marginLeft + 3, yPosition);
-                yPosition += inspLines.length * 5;
-            }
-            if (producao.historicoEquipamento) {
-                const histLines = pdf.splitTextToSize('✓ Histórico do Equipamento - FOR-MAN-008', maxWidth - 6);
-                pdf.text(histLines, marginLeft + 3, yPosition);
-                yPosition += histLines.length * 5;
-            }
-
-            yPosition += 5;
-            pdf.line(marginLeft, yPosition, pageWidth - marginRight, yPosition);
-            yPosition += 10;
 
             // Assinaturas
+            yPosition += 10;
             addSection('RECEBIMENTO DA ORDEM');
             yPosition += 25;
             
@@ -168,9 +151,9 @@ export const usePdfExport = () => {
             const col2 = pageWidth / 2;
             const col3 = pageWidth - marginRight - 15;
             
-            pdf.line(col1 - 15, signatureY, col1 + 15, signatureY);
-            pdf.line(col2 - 15, signatureY, col2 + 15, signatureY);
-            pdf.line(col3 - 15, signatureY, col3 + 15, signatureY);
+            pdf.line(col1 - 25, signatureY, col1 + 25, signatureY);
+            pdf.line(col2 - 25, signatureY, col2 + 25, signatureY);
+            pdf.line(col3 - 25, signatureY, col3 + 25, signatureY);
             
             yPosition = signatureY + 6;
             pdf.setFontSize(8);

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useProducoesMock } from '../hooks/useProducoesMock';
-import { Producao } from '../types/producao';
+import { Producao, CreateProducaoDto } from '../types/producao';
 import { PdfExporter } from '../components/PdfExporter';
+import { FormularioOrdem } from '../components/FormularioOrdem';
 import './OrdemProducao.css';
 
 interface SelectedProducao {
@@ -10,8 +11,9 @@ interface SelectedProducao {
 }
 
 const OrdemProducao: React.FC = () => {
-  const { producoes, loading, error } = useProducoesMock();
+  const { producoes, loading, error, criarProducao } = useProducoesMock();
   const [selected, setSelected] = useState<SelectedProducao | null>(null);
+  const [modo, setModo] = useState<'lista' | 'criar'>('lista');
 
   const handleSelectProducao = (producao: Producao) => {
     setSelected({
@@ -20,21 +22,47 @@ const OrdemProducao: React.FC = () => {
     });
   };
 
+  const handleCriarOrdem = (novaProducao: CreateProducaoDto) => {
+    criarProducao(novaProducao);
+    setModo('lista');
+    alert('Ordem de produção criada com sucesso!');
+  };
+
   if (loading) return <div className="container"><p>Carregando...</p></div>;
   if (error) return <div className="container error"><p>Erro: {error}</p></div>;
+
+  if (modo === 'criar') {
+    return (
+      <div className="container">
+        <FormularioOrdem
+          onSalvar={handleCriarOrdem}
+          onCancelar={() => setModo('lista')}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="container">
       <h1>Ordem de Produção</h1>
       
+      <div className="toolbar">
+        <button 
+          onClick={() => setModo('criar')}
+          className="btn-novo"
+        >
+          Gerar Ordem de Produção
+        </button>
+      </div>
+      
       <div className="content">
         <div className="list-section">
-          <h2>Produções</h2>
+          <h2>Produções ({producoes.length})</h2>
           {producoes.length === 0 ? (
             <p>Nenhuma produção encontrada</p>
           ) : (
             <ul className="producao-list">
-              {producoes.map((producao) => (
+              {producoes.map((producao: Producao) => (
                 <li
                   key={producao.id}
                   className={selected?.id === producao.id ? 'active' : ''}
@@ -75,43 +103,65 @@ const OrdemProducao: React.FC = () => {
                 <p>{selected.data.descricao}</p>
               </div>
 
-              <div className="documents-section">
-                <h3>Documentos</h3>
-                <div className="doc-checkboxes">
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={selected.data.listaPecas}
-                      readOnly
-                    />
-                    Lista de Peças
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={selected.data.sequencialMontagem}
-                      readOnly
-                    />
-                    Sequencial de Montagem
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={selected.data.inspecaoMontagem}
-                      readOnly
-                    />
-                    Inspeção de Montagem
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={selected.data.historicoEquipamento}
-                      readOnly
-                    />
-                    Histórico do Equipamento
-                  </label>
+              {selected.data.itensSeriados && selected.data.itensSeriados.length > 0 && (
+                <div className="documents-section">
+                  <h3>Itens Serializados</h3>
+                  {selected.data.itensSeriados.map((item) => (
+                    <div key={item.id} className="doc-item">
+                      <strong>{item.numero}</strong>
+                      <p>{item.descricao}</p>
+                      <small>Série: {item.numeroSerie}</small>
+                    </div>
+                  ))}
                 </div>
-              </div>
+              )}
+
+              {selected.data.documentos && selected.data.documentos.length > 0 && (
+                <div className="documents-section">
+                  <h3>Documentos Relacionados</h3>
+                  {selected.data.documentos.map((doc) => (
+                    <div key={doc.id} className="doc-item">
+                      <strong>{doc.nome}</strong>
+                      <small>Código: {doc.codigo}</small>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {selected.data.listaPecas && (
+                <div className="documents-section">
+                  <h3>Lista de Peças</h3>
+                  <p>{selected.data.listaPecas}</p>
+                </div>
+              )}
+
+              {selected.data.sequencialMontagem && (
+                <div className="documents-section">
+                  <h3>Sequencial de Montagem</h3>
+                  <p>{selected.data.sequencialMontagem}</p>
+                </div>
+              )}
+
+              {selected.data.inspecaoMontagem && (
+                <div className="documents-section">
+                  <h3>Inspeção de Montagem</h3>
+                  <p>{selected.data.inspecaoMontagem}</p>
+                </div>
+              )}
+
+              {selected.data.historicoEquipamento && (
+                <div className="documents-section">
+                  <h3>Histórico do Equipamento</h3>
+                  <p>{selected.data.historicoEquipamento}</p>
+                </div>
+              )}
+
+              {selected.data.observacoes && (
+                <div className="documents-section">
+                  <h3>Observações Adicionais</h3>
+                  <p>{selected.data.observacoes}</p>
+                </div>
+              )}
 
               <PdfExporter 
                 producao={selected.data}
