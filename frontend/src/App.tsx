@@ -1,9 +1,12 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, Outlet } from 'react-router-dom';
 import './App.css';
+import './pages/Producao.css';
 import Header from './components/Layout/Header';
+import Producao from './pages/Producao';
 import OrdemProducao from './pages/OrdemProducao';
 import InspecaoMontagem from './pages/InspecaoMontagem';
+import HistoricoEquipamento from './pages/HistoricoEquipamento';
 
 function App() {
   return (
@@ -13,18 +16,22 @@ function App() {
         
         <nav className="navbar">
           <ul>
-            <li><Link to="/">Ordem de Produção</Link></li>
-            <li><Link to="/inspecao">Inspeção de Montagem</Link></li>
+            <li><Link to="/producao">Produção</Link></li>
             <li><Link to="/manutencao">Manutenção</Link></li>
-            <li><Link to="/historico">Histórico</Link></li>
           </ul>
         </nav>
 
         <Routes>
-          <Route path="/" element={<OrdemProducao />} />
-          <Route path="/inspecao" element={<InspecaoMontagem />} />
+          <Route path="/producao" element={<Producao><Outlet /></Producao>}>
+            <Route path="ordem" element={<OrdemProducao />} />
+            <Route path="inspecao" element={<InspecaoMontagem />} />
+            <Route path="historico" element={<HistoricoEquipamento />} />
+            <Route index element={<OrdemProducao />} />
+          </Route>
+          <Route path="/" element={<Producao><Outlet /></Producao>}>
+            <Route index element={<OrdemProducao />} />
+          </Route>
           <Route path="/manutencao" element={<div>Manutenção (em desenvolvimento)</div>} />
-          <Route path="/historico" element={<div>Histórico (em desenvolvimento)</div>} />
         </Routes>
       </div>
     </BrowserRouter>
