@@ -14,17 +14,13 @@ export interface CreateInspecaoMontageDto {
   modelo: string;
   // Instrumentos de Afeição (verificação com SIM/NÃO)
   instrumentosAferição: VerificacaoItem[]; // Micrômetro, Multímetro, etc.
-  // Verificação Geral Pré Montagem
-  verificacaoPremontagem: VerificacaoItem[];
-  // Análise Dimensional de Carcaça
-  analiseDimensional: VerificacaoItem[];
-  // Testes
-  testes: VerificacaoItem[];
+  // Verificações Gerais Pré Montagem (inclui Check dos Seriados, Análise Dimensional e Testes)
+  verificacoesGeraisPremontagem: VerificacaoItem[];
   // Verificações Gerais Pós Montagem
   verificacaoPosmontagem: VerificacaoItem[];
   // Resultado Final
   resultadoFinal: 'APROVADO' | 'REPROVADO' | '';
-  observacoes: string;
+  observacoes?: string;
   responsavel: string;
   data: string;
   assinatura?: string;

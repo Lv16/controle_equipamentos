@@ -125,7 +125,7 @@
 }
 
 .formulario-inspecao .btn-add:hover {
-  background: #9db01a;
+  background: #0D4C94;
 }
 
 .formulario-inspecao .form-buttons {
@@ -147,11 +147,11 @@
 
 .formulario-inspecao .btn-salvar {
   background: #FF1C20;
-  color: #333;
+  color: white;
 }
 
 .formulario-inspecao .btn-salvar:hover {
-  background: #9db01a;
+  background: #0D4C94;
 }
 
 .formulario-inspecao .btn-cancelar {
@@ -170,11 +170,12 @@
   margin-top: 10px;
   font-size: 13px;
   background: white;
+  table-layout: fixed;
 }
 
 .formulario-inspecao .verificacoes-table thead {
-  background: #B2CC21;
-  color: #333;
+  background: #0D4C94;
+  color: white;
 }
 
 .formulario-inspecao .verificacoes-table th {
@@ -182,11 +183,20 @@
   text-align: left;
   font-weight: bold;
   border: 1px solid #ddd;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .formulario-inspecao .verificacoes-table td {
-  padding: 8px;
+  padding: 6px;
   border: 1px solid #ddd;
+  overflow: hidden;
+}
+
+/* Subtítulos na tabela - apenas negrito, sem caixa azul */
+.formulario-inspecao .verificacoes-table td:first-child {
+  font-weight: 500;
+  color: #333;
 }
 
 .formulario-inspecao .verificacoes-table tbody tr:nth-child(odd) {
@@ -199,10 +209,17 @@
 
 .formulario-inspecao .verificacoes-table input[type="text"] {
   width: 100%;
-  padding: 6px;
-  border: 1px solid #ddd;
+  padding: 5px;
+  border: 1px solid #ccc;
   border-radius: 3px;
   font-size: 12px;
+  box-sizing: border-box;
+}
+
+.formulario-inspecao .verificacoes-table input[type="text"]:focus {
+  outline: none;
+  border-color: #0D4C94;
+  box-shadow: 0 0 3px rgba(13, 76, 148, 0.3);
 }
 
 .formulario-inspecao .checkbox-group {
@@ -242,7 +259,7 @@
 
 .formulario-inspecao .form-actions .btn-salvar {
   background: #FF1C20;
-  color: #333;
+  color: white;
 }
 
 .formulario-inspecao .form-actions .btn-salvar:hover {

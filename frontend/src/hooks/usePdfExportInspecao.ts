@@ -11,11 +11,22 @@ export const usePdfExportInspecao = () => {
             });
 
             const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
             const marginLeft = 15;
             const marginRight = 15;
             const maxWidth = pageWidth - marginLeft - marginRight;
+            const pageBottomMargin = 15;
+            const maxYPosition = pageHeight - pageBottomMargin;
             
             let yPosition = 15;
+
+            // Função para gerenciar quebra de página automática
+            const checkPageBreak = (spaceNeeded: number) => {
+                if (yPosition + spaceNeeded > maxYPosition) {
+                    pdf.addPage();
+                    yPosition = 15;
+                }
+            };
 
             // Logo
             if (logoPath) {
@@ -39,7 +50,7 @@ export const usePdfExportInspecao = () => {
             pdf.text('INSPEÇÃO DE MONTAGEM', pageWidth / 2, yPosition, { align: 'center' });
             
             pdf.setFontSize(9);
-            pdf.text('FOR-MAN-005 - Rev. 5', pageWidth - marginRight - 5, yPosition, { align: 'right' });
+            pdf.text('FOR-MAN-006 - Rev. 5', pageWidth - marginRight - 5, yPosition, { align: 'right' });
             
             yPosition += 8;
 
@@ -77,114 +88,152 @@ export const usePdfExportInspecao = () => {
 
             // INSTRUMENTOS DE AFEIÇÃO
             if (inspecao.instrumentosAferição && inspecao.instrumentosAferição.length > 0) {
-                addSection('VERIFICAÇÕES NOS INSTRUMENTOS DE AFEIÇÃO');
-                inspecao.instrumentosAferição.forEach((item) => {
+                checkPageBreak(25);
+                addSection('VERIFICAÇÕES NOS INSTRUMENTOS DE AFERIÇÃO');
+                
+                // Tabela com linhas
+                const colWidths = [maxWidth * 0.75, maxWidth * 0.25];
+                const rowHeight = 6;
+                
+                // Cabeçalho da tabela
+                pdf.setFillColor(240, 240, 240);
+                pdf.rect(marginLeft, yPosition, colWidths[0], rowHeight, 'F');
+                pdf.rect(marginLeft + colWidths[0], yPosition, colWidths[1], rowHeight, 'F');
+                pdf.setDrawColor(0, 0, 0);
+                pdf.setFont(undefined, 'bold');
+                pdf.setFontSize(8);
+                pdf.text('Item', marginLeft + 2, yPosition + 4);
+                pdf.text('Conformidade', marginLeft + colWidths[0] + 2, yPosition + 4);
+                yPosition += rowHeight;
+                
+                // Linhas de dados
+                pdf.setFont(undefined, 'normal');
+                inspecao.instrumentosAferição.forEach((item, idx) => {
+                    checkPageBreak(8);
                     const conformidade = item.conformidade || '—';
-                    pdf.setFontSize(8);
-                    pdf.text(`• ${item.nome}: ${conformidade}`, marginLeft + 5, yPosition);
-                    yPosition += 4;
+                    pdf.setDrawColor(200, 200, 200);
+                    pdf.rect(marginLeft, yPosition, colWidths[0], rowHeight);
+                    pdf.rect(marginLeft + colWidths[0], yPosition, colWidths[1], rowHeight);
+                    
+                    const itemText = pdf.splitTextToSize(item.nome, colWidths[0] - 4);
+                    pdf.setFontSize(7);
+                    pdf.text(itemText[0] || '', marginLeft + 2, yPosition + 3);
+                    pdf.text(conformidade, marginLeft + colWidths[0] + 2, yPosition + 3);
+                    yPosition += rowHeight;
                 });
-                yPosition += 2;
+                yPosition += 3;
             }
 
-            // VERIFICAÇÃO PRÉ MONTAGEM
-            if (inspecao.verificacaoPremontagem && inspecao.verificacaoPremontagem.length > 0) {
-                addSection('VERIFICAÇÃO GERAL PRÉ MONTAGEM');
-                inspecao.verificacaoPremontagem.forEach((item) => {
-                    pdf.setFontSize(8);
-                    pdf.setFont(undefined, 'bold');
-                    pdf.text(item.nome, marginLeft + 3, yPosition);
-                    yPosition += 3;
-                    pdf.setFont(undefined, 'normal');
-                    
-                    if (item.valorObservado) {
-                        pdf.text(`Valor Observado: ${item.valorObservado}`, marginLeft + 5, yPosition);
-                        yPosition += 3;
+            // VERIFICAÇÕES GERAIS PRÉ MONTAGEM
+            if (inspecao.verificacoesGeraisPremontagem && inspecao.verificacoesGeraisPremontagem.length > 0) {
+                checkPageBreak(25);
+                addSection('VERIFICAÇÕES GERAIS PRÉ MONTAGEM');
+                
+                // Tabela com linhas
+                const colWidths = [maxWidth * 0.40, maxWidth * 0.20, maxWidth * 0.20, maxWidth * 0.20];
+                const rowHeight = 6;
+                
+                // Cabeçalho
+                pdf.setFillColor(240, 240, 240);
+                pdf.setDrawColor(0, 0, 0);
+                pdf.rect(marginLeft, yPosition, colWidths[0], rowHeight, 'F');
+                pdf.rect(marginLeft + colWidths[0], yPosition, colWidths[1], rowHeight, 'F');
+                pdf.rect(marginLeft + colWidths[0] + colWidths[1], yPosition, colWidths[2], rowHeight, 'F');
+                pdf.rect(marginLeft + colWidths[0] + colWidths[1] + colWidths[2], yPosition, colWidths[3], rowHeight, 'F');
+                
+                pdf.setFont(undefined, 'bold');
+                pdf.setFontSize(7);
+                pdf.text('Item', marginLeft + 2, yPosition + 3.5);
+                pdf.text('Valor', marginLeft + colWidths[0] + 2, yPosition + 3.5);
+                pdf.text('Instrumento', marginLeft + colWidths[0] + colWidths[1] + 2, yPosition + 3.5);
+                pdf.text('Conformidade', marginLeft + colWidths[0] + colWidths[1] + colWidths[2] + 2, yPosition + 3.5);
+                yPosition += rowHeight;
+                
+                // Dados
+                pdf.setFont(undefined, 'normal');
+                inspecao.verificacoesGeraisPremontagem.forEach((item) => {
+                    checkPageBreak(8);
+                    if (item.nome.startsWith('@SECTION:')) {
+                        // Linha de seção
+                        pdf.setFillColor(255, 255, 255);
+                        pdf.rect(marginLeft, yPosition, maxWidth, rowHeight, 'F');
+                        pdf.setDrawColor(0, 0, 0);
+                        pdf.rect(marginLeft, yPosition, maxWidth, rowHeight);
+                        pdf.setFont(undefined, 'bold');
+                        pdf.setFontSize(8);
+                        const sectionTitle = item.nome.replace('@SECTION:', '');
+                        pdf.text(sectionTitle, marginLeft + 2, yPosition + 3.5);
+                        yPosition += rowHeight;
+                    } else {
+                        // Linha de item
+                        pdf.rect(marginLeft, yPosition, colWidths[0], rowHeight);
+                        pdf.rect(marginLeft + colWidths[0], yPosition, colWidths[1], rowHeight);
+                        pdf.rect(marginLeft + colWidths[0] + colWidths[1], yPosition, colWidths[2], rowHeight);
+                        pdf.rect(marginLeft + colWidths[0] + colWidths[1] + colWidths[2], yPosition, colWidths[3], rowHeight);
+                        
+                        pdf.setFont(undefined, 'normal');
+                        pdf.setFontSize(6);
+                        const itemText = pdf.splitTextToSize(item.nome, colWidths[0] - 4);
+                        pdf.text(itemText[0] || '', marginLeft + 2, yPosition + 3);
+                        pdf.text(item.valorObservado || '', marginLeft + colWidths[0] + 2, yPosition + 3);
+                        pdf.text(item.instrumentoMedicao || '', marginLeft + colWidths[0] + colWidths[1] + 2, yPosition + 3);
+                        pdf.text(item.conformidade || '—', marginLeft + colWidths[0] + colWidths[1] + colWidths[2] + 2, yPosition + 3);
+                        yPosition += rowHeight;
                     }
-                    if (item.instrumentoMedicao) {
-                        pdf.text(`Instrumento: ${item.instrumentoMedicao}`, marginLeft + 5, yPosition);
-                        yPosition += 3;
-                    }
-                    pdf.text(`Conformidade: ${item.conformidade || '—'}`, marginLeft + 5, yPosition);
-                    yPosition += 5;
                 });
-                yPosition += 2;
-            }
-
-            // ANÁLISE DIMENSIONAL
-            if (inspecao.analiseDimensional && inspecao.analiseDimensional.length > 0) {
-                addSection('ANÁLISE DIMENSIONAL DE CARCAÇA');
-                inspecao.analiseDimensional.forEach((item) => {
-                    pdf.setFontSize(8);
-                    pdf.setFont(undefined, 'bold');
-                    pdf.text(item.nome, marginLeft + 3, yPosition);
-                    yPosition += 3;
-                    pdf.setFont(undefined, 'normal');
-                    
-                    if (item.valorObservado) {
-                        pdf.text(`Valor: ${item.valorObservado}`, marginLeft + 5, yPosition);
-                        yPosition += 3;
-                    }
-                    if (item.instrumentoMedicao) {
-                        pdf.text(`Instrumento: ${item.instrumentoMedicao}`, marginLeft + 5, yPosition);
-                        yPosition += 3;
-                    }
-                    pdf.text(`Conformidade: ${item.conformidade || '—'}`, marginLeft + 5, yPosition);
-                    yPosition += 5;
-                });
-                yPosition += 2;
-            }
-
-            // TESTES
-            if (inspecao.testes && inspecao.testes.length > 0) {
-                addSection('TESTES');
-                inspecao.testes.forEach((item) => {
-                    pdf.setFontSize(8);
-                    pdf.setFont(undefined, 'bold');
-                    pdf.text(item.nome, marginLeft + 3, yPosition);
-                    yPosition += 3;
-                    pdf.setFont(undefined, 'normal');
-                    
-                    if (item.valorObservado) {
-                        pdf.text(`Valor: ${item.valorObservado}`, marginLeft + 5, yPosition);
-                        yPosition += 3;
-                    }
-                    if (item.instrumentoMedicao) {
-                        pdf.text(`Instrumento: ${item.instrumentoMedicao}`, marginLeft + 5, yPosition);
-                        yPosition += 3;
-                    }
-                    pdf.text(`Conformidade: ${item.conformidade || '—'}`, marginLeft + 5, yPosition);
-                    yPosition += 5;
-                });
-                yPosition += 2;
+                yPosition += 3;
             }
 
             // VERIFICAÇÃO PÓS MONTAGEM
             if (inspecao.verificacaoPosmontagem && inspecao.verificacaoPosmontagem.length > 0) {
+                checkPageBreak(25);
                 addSection('VERIFICAÇÕES GERAIS PÓS MONTAGEM');
+                
+                // Tabela com linhas
+                const colWidths = [maxWidth * 0.40, maxWidth * 0.20, maxWidth * 0.20, maxWidth * 0.20];
+                const rowHeight = 6;
+                
+                // Cabeçalho
+                pdf.setFillColor(240, 240, 240);
+                pdf.setDrawColor(0, 0, 0);
+                pdf.rect(marginLeft, yPosition, colWidths[0], rowHeight, 'F');
+                pdf.rect(marginLeft + colWidths[0], yPosition, colWidths[1], rowHeight, 'F');
+                pdf.rect(marginLeft + colWidths[0] + colWidths[1], yPosition, colWidths[2], rowHeight, 'F');
+                pdf.rect(marginLeft + colWidths[0] + colWidths[1] + colWidths[2], yPosition, colWidths[3], rowHeight, 'F');
+                
+                pdf.setFont(undefined, 'bold');
+                pdf.setFontSize(7);
+                pdf.text('Item', marginLeft + 2, yPosition + 3.5);
+                pdf.text('Valor', marginLeft + colWidths[0] + 2, yPosition + 3.5);
+                pdf.text('Instrumento', marginLeft + colWidths[0] + colWidths[1] + 2, yPosition + 3.5);
+                pdf.text('Conformidade', marginLeft + colWidths[0] + colWidths[1] + colWidths[2] + 2, yPosition + 3.5);
+                yPosition += rowHeight;
+                
+                // Dados
+                pdf.setFont(undefined, 'normal');
                 inspecao.verificacaoPosmontagem.forEach((item) => {
-                    pdf.setFontSize(8);
-                    pdf.setFont(undefined, 'bold');
-                    pdf.text(item.nome, marginLeft + 3, yPosition);
-                    yPosition += 3;
-                    pdf.setFont(undefined, 'normal');
+                    checkPageBreak(8);
+                    pdf.setDrawColor(0, 0, 0);
+                    pdf.rect(marginLeft, yPosition, colWidths[0], rowHeight);
+                    pdf.rect(marginLeft + colWidths[0], yPosition, colWidths[1], rowHeight);
+                    pdf.rect(marginLeft + colWidths[0] + colWidths[1], yPosition, colWidths[2], rowHeight);
+                    pdf.rect(marginLeft + colWidths[0] + colWidths[1] + colWidths[2], yPosition, colWidths[3], rowHeight);
                     
-                    if (item.valorObservado) {
-                        pdf.text(`Valor: ${item.valorObservado}`, marginLeft + 5, yPosition);
-                        yPosition += 3;
-                    }
-                    if (item.instrumentoMedicao) {
-                        pdf.text(`Instrumento: ${item.instrumentoMedicao}`, marginLeft + 5, yPosition);
-                        yPosition += 3;
-                    }
-                    pdf.text(`Conformidade: ${item.conformidade || '—'}`, marginLeft + 5, yPosition);
-                    yPosition += 5;
+                    pdf.setFont(undefined, 'normal');
+                    pdf.setFontSize(6);
+                    const itemText = pdf.splitTextToSize(item.nome, colWidths[0] - 4);
+                    pdf.text(itemText[0] || '', marginLeft + 2, yPosition + 3);
+                    pdf.text(item.valorObservado || '', marginLeft + colWidths[0] + 2, yPosition + 3);
+                    pdf.text(item.instrumentoMedicao || '', marginLeft + colWidths[0] + colWidths[1] + 2, yPosition + 3);
+                    pdf.text(item.conformidade || '—', marginLeft + colWidths[0] + colWidths[1] + colWidths[2] + 2, yPosition + 3);
+                    yPosition += rowHeight;
                 });
-                yPosition += 2;
+                yPosition += 3;
             }
 
             // RESULTADO DE INSPEÇÃO
             if (inspecao.resultadoFinal) {
+                checkPageBreak(20);
                 addSection('RESULTADO DE INSPEÇÃO');
                 pdf.setFontSize(11);
                 pdf.setFont(undefined, 'bold');
@@ -193,17 +242,6 @@ export const usePdfExportInspecao = () => {
                 pdf.text(inspecao.resultadoFinal, marginLeft + 3, yPosition);
                 pdf.setTextColor(0, 0, 0);
                 yPosition += 10;
-            }
-
-            // OBSERVAÇÕES
-            if (inspecao.observacoes) {
-                addSection('OBSERVAÇÕES');
-                pdf.setFontSize(9);
-                const obsLines = pdf.splitTextToSize(inspecao.observacoes, maxWidth - 6);
-                obsLines.forEach((line: string) => {
-                    pdf.text(line, marginLeft + 3, yPosition);
-                    yPosition += 4;
-                });
             }
 
             pdf.save(filename);
