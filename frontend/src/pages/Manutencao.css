@@ -1,0 +1,238 @@
+.manutencao-container {
+  width: 100%;
+  min-height: calc(100vh - 140px);
+  background: #f8f9fa;
+}
+
+.manutencao-header {
+  background: white;
+  border-bottom: 2px solid #FF1C20;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.manutencao-header h1 {
+  color: #0d4c94;
+  margin: 0 0 20px 0;
+  font-size: 28px;
+}
+
+.manutencao-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  border: 2px solid #e0e0e0;
+  background: white;
+  color: #333;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+  border-color: #FF1C20;
+  color: #FF1C20;
+}
+
+.tab-button.active {
+  background: #FF1C20;
+  color: white;
+  border-color: #FF1C20;
+  box-shadow: 0 2px 8px rgba(255, 28, 32, 0.3);
+}
+
+.manutencao-content {
+  padding: 20px;
+}
+
+.manutencao-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tab-nova-inspecao,
+.tab-historico {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tab-historico h2 {
+  color: #0d4c94;
+  margin-bottom: 20px;
+  font-size: 22px;
+}
+
+.tabela-container {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.tabela-historico {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabela-historico thead {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.tabela-historico th {
+  padding: 15px;
+  text-align: left;
+  font-weight: 600;
+  color: #0d4c94;
+  font-size: 14px;
+}
+
+.tabela-historico td {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.tabela-historico tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+.tabela-historico tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.badge-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.btn-visualizar {
+  padding: 8px 16px;
+  background-color: #FF1C20;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(255, 28, 32, 0.2);
+}
+
+.btn-visualizar:hover {
+  background-color: #CC1319;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 28, 32, 0.3);
+}
+
+.btn-exportar-historico {
+  padding: 8px 16px;
+  background-color: #FF1C20;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(255, 28, 32, 0.2);
+}
+
+.btn-exportar-historico:hover {
+  background-color: #CC1319;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 28, 32, 0.3);
+}
+
+.sem-dados {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.sem-dados p {
+  color: #999;
+  font-size: 16px;
+  margin: 0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .manutencao-header {
+    padding: 15px;
+  }
+
+  .manutencao-header h1 {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+
+  .manutencao-tabs {
+    gap: 8px;
+  }
+
+  .tab-button {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .manutencao-content {
+    padding: 10px;
+  }
+
+  .tabela-historico th,
+  .tabela-historico td {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .btn-visualizar {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .btn-exportar-historico {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .tab-historico h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+}

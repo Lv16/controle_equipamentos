@@ -1,0 +1,341 @@
+.formulario-inspecao-manutencao {
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+/* Dados do Equipamento */
+.dados-equipamento {
+  background: #f8f9fa;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.dados-equipamento h2 {
+  color: #0d4c94;
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  padding: 0;
+}
+
+.grid-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+  font-size: 13px;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #FF1C20;
+  box-shadow: 0 0 0 3px rgba(255, 28, 32, 0.1);
+}
+
+/* Seções de Inspeção */
+.inspecoes {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 20px;
+}
+
+.secao-inspecao {
+  background: white;
+  padding: 20px;
+  border-left: 4px solid #FF1C20;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+.secao-inspecao:last-child {
+  margin-bottom: 0;
+}
+
+.titulo-secao {
+  color: #0d4c94;
+  font-size: 14px;
+  margin: 0 0 15px 0;
+  padding: 0;
+  border: none;
+  font-weight: 600;
+}
+
+.itens-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.item-inspecao {
+  padding: 12px;
+  background-color: #f9f9f9;
+  border-left: 4px solid #0d4c94;
+  border-radius: 2px;
+}
+
+.pergunta {
+  font-weight: 500;
+  color: #333;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+  font-size: 14px;
+}
+
+.respostas {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  user-select: none;
+}
+
+.checkbox-label input {
+  cursor: pointer;
+  margin: 0;
+  width: 16px;
+  height: 16px;
+  accent-color: #FF1C20;
+}
+
+.checkbox-custom {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  font-size: 12px;
+  line-height: 14px;
+  text-align: center;
+}
+
+.input-observacoes {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: none;
+}
+
+.input-observacoes::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.input-observacoes:focus {
+  outline: none;
+  border-color: #FF1C20;
+  box-shadow: 0 0 0 2px rgba(255, 28, 32, 0.1);
+}
+
+/* Avaliação Final */
+.avaliacao-final {
+  background: #f8f9fa;
+  padding: 20px;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 0;
+}
+
+.avaliacao-final h3 {
+  color: #0d4c94;
+  font-size: 14px;
+  margin: 0 0 15px 0;
+  padding: 0;
+  border: none;
+  font-weight: 600;
+}
+
+.avaliacao-final .respostas {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 0;
+}
+
+/* Observações Gerais */
+.observacoes-gerais {
+  background: white;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.observacoes-gerais h3 {
+  color: #0d4c94;
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+}
+
+.observacoes-gerais textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.observacoes-gerais textarea:focus {
+  outline: none;
+  border-color: #FF1C20;
+  box-shadow: 0 0 0 3px rgba(255, 28, 32, 0.1);
+}
+
+/* Assinatura */
+.assinatura {
+  background: white;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.assinatura h3 {
+  color: #0d4c94;
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+}
+
+.assinatura input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.assinatura input:focus {
+  outline: none;
+  border-color: #FF1C20;
+  box-shadow: 0 0 0 3px rgba(255, 28, 32, 0.1);
+}
+
+.botoes {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 20px;
+  background: white;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-salvar {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #FF1C20;
+  color: white;
+  box-shadow: 0 2px 4px rgba(255, 28, 32, 0.2);
+}
+
+.btn-salvar:hover {
+  background-color: #CC1319;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 28, 32, 0.3);
+}
+
+.btn-salvar:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(255, 28, 32, 0.2);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .formulario-inspecao-manutencao {
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .grid-inputs {
+    grid-template-columns: 1fr;
+  }
+
+  .respostas {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .avaliacao-final .respostas {
+    flex-direction: row;
+    gap: 20px;
+  }
+
+  .botoes {
+    flex-direction: column;
+  }
+
+  .btn-salvar {
+    width: 100%;
+  }
+
+  .inspecoes {
+    padding: 15px;
+  }
+
+  .secao-inspecao {
+    padding: 15px;
+  }
+
+  .dados-equipamento,
+  .avaliacao-final,
+  .observacoes-gerais,
+  .assinatura {
+    padding: 15px;
+  }
+
+  .titulo-secao {
+    font-size: 13px;
+  }
+
+  .pergunta {
+    font-size: 13px;
+  }
+
+  .checkbox-label {
+    font-size: 12px;
+  }
+}
