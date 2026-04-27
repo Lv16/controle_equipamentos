@@ -37,19 +37,6 @@ export const FormularioInspecaoManutencao: React.FC<FormularioInspecaoManutencao
     }));
   };
 
-  const handleObservacaoChange = (
-    secao: keyof Pick<InspecaoManutencao, 'certificacoes' | 'estruturaMecanica' | 'sistemaHidraulico' | 'sistemaPneumatico' | 'sistemaEletrico' | 'dispositivoSeguranca' | 'componentesOperacionais' | 'acessorios' | 'testesOperacionais'>,
-    itemId: string,
-    observacao: string
-  ) => {
-    setInspecao((prev) => ({
-      ...prev,
-      [secao]: prev[secao].map((item) =>
-        item.id === itemId ? { ...item, observacoes: observacao } : item
-      ),
-    }));
-  };
-
   const renderSecao = (
     secao: keyof Pick<InspecaoManutencao, 'certificacoes' | 'estruturaMecanica' | 'sistemaHidraulico' | 'sistemaPneumatico' | 'sistemaEletrico' | 'dispositivoSeguranca' | 'componentesOperacionais' | 'acessorios' | 'testesOperacionais'>,
     titulo: string
@@ -58,7 +45,7 @@ export const FormularioInspecaoManutencao: React.FC<FormularioInspecaoManutencao
 
     return (
       <div key={secao} className="secao-inspecao">
-        <h3 className="titulo-secao">🔹 {titulo}</h3>
+        <h3 className="titulo-secao">{titulo}</h3>
         <div className="itens-container">
           {itens.map((item) => (
             <div key={item.id} className="item-inspecao">
@@ -78,13 +65,7 @@ export const FormularioInspecaoManutencao: React.FC<FormularioInspecaoManutencao
                   </label>
                 ))}
               </div>
-              <input
-                type="text"
-                placeholder="Observações (opcional)"
-                value={item.observacoes || ''}
-                onChange={(e) => handleObservacaoChange(secao, item.id, e.target.value)}
-                className="input-observacoes"
-              />
+
             </div>
           ))}
         </div>
@@ -195,7 +176,7 @@ export const FormularioInspecaoManutencao: React.FC<FormularioInspecaoManutencao
       </div>
 
       <div className="avaliacao-final">
-        <h3>🔹 AVALIAÇÃO FINAL</h3>
+        <h3>AVALIAÇÃO FINAL</h3>
         <div className="respostas">
           {(['CONFORME', 'NÃO CONFORME'] as const).map((aval) => (
             <label key={aval} className="checkbox-label">
@@ -214,10 +195,10 @@ export const FormularioInspecaoManutencao: React.FC<FormularioInspecaoManutencao
       </div>
 
       <div className="observacoes-gerais">
-        <h3>Observações Gerais</h3>
+        <h3>Observações</h3>
         <textarea
-          value={inspecao.observacoesGerais || ''}
-          onChange={(e) => handleInputChange('observacoesGerais', e.target.value)}
+          value={inspecao.observacoes || ''}
+          onChange={(e) => handleInputChange('observacoes', e.target.value)}
           placeholder="Digite observações gerais da inspeção"
           rows={4}
         />

@@ -70,7 +70,6 @@
 .secao-inspecao {
   background: white;
   padding: 20px;
-  border-left: 4px solid #FF1C20;
   margin-bottom: 20px;
   border-radius: 4px;
 }
@@ -86,6 +85,8 @@
   padding: 0;
   border: none;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .itens-container {
@@ -97,7 +98,6 @@
 .item-inspecao {
   padding: 12px;
   background-color: #f9f9f9;
-  border-left: 4px solid #0d4c94;
   border-radius: 2px;
 }
 
@@ -125,45 +125,30 @@
   user-select: none;
 }
 
-.checkbox-label input {
+.checkbox-label input[type="radio"] {
   cursor: pointer;
   margin: 0;
   width: 16px;
   height: 16px;
-  accent-color: #FF1C20;
+  accent-color: #0d4c94;
+  appearance: auto;
+  -webkit-appearance: radio;
+  -moz-appearance: radio;
+  outline: none;
 }
 
 .checkbox-custom {
-  display: inline-block;
+  display: none;
   width: 16px;
   height: 16px;
   border: 1px solid #ccc;
-  border-radius: 2px;
+  border-radius: 50%;
   font-size: 12px;
   line-height: 14px;
   text-align: center;
 }
 
-.input-observacoes {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 13px;
-  font-family: inherit;
-  resize: none;
-}
 
-.input-observacoes::placeholder {
-  color: #999;
-  font-style: italic;
-}
-
-.input-observacoes:focus {
-  outline: none;
-  border-color: #FF1C20;
-  box-shadow: 0 0 0 2px rgba(255, 28, 32, 0.1);
-}
 
 /* Avaliação Final */
 .avaliacao-final {
