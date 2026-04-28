@@ -140,9 +140,9 @@ export const Manutencao: React.FC = () => {
               <div className="action-buttons">
                 <button 
                   onClick={() => handleExportarPDF(selected.data)}
-                  className="btn-secondary"
+                  className="btn-primary"
                 >
-                  📄 Exportar PDF
+                  Exportar PDF
                 </button>
               </div>
             </div>
