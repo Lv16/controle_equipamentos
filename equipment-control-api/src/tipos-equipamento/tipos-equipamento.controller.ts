@@ -1,11 +1,14 @@
-import { Body, Controller, Get, Param, Patch, Post, Put } from '@nestjs/common';
-import { ApiOperation,ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { TiposEquipamentoService } from './tipos-equipamento.service';
 import { CreateTipoEquipamentoDto } from './dto/create-tipo-equipamento.dto';
 import { UpdateTipoEquipamentoDto } from './dto/update-tipo-equipamento.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 
 @ApiTags('Tipos de Equipamento')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @Controller('tipos-equipamento')
 export class TiposEquipamentoController {
     constructor(

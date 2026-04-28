@@ -1,13 +1,17 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateProducaoDto } from './dto/create-producao.dto';
 import { UpdateProducaoDto } from './dto/update-producao.dto';
 import { CreateObservacaoDto } from './dto/create-observacao.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { UpdateRegistroInspecaoDto } from './dto/update-registro-inspecao.dto';
 import { ProducoesService } from './producoes.service';
+import { FilterProducaoDto } from './dto/filter-producao.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('Produções')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @Controller('producoes')
 export class ProducoesController {
     constructor(private readonly producoesService: ProducoesService) {}
@@ -28,10 +32,9 @@ export class ProducoesController {
     }
 
     @Get()
-    @ApiOperation({ summary: 'Listar todas as produções' })
-    findAll() {
-        return this.producoesService.findAll();
-
+    @ApiOperation({ summary: 'Listar todas as produções com filtros e paginação' })
+    findAll(@Query() filters: FilterProducaoDto) {
+        return this.producoesService.findAll(filters);
     }
 
     @Get(':id/observacoes')
@@ -60,14 +63,20 @@ export class ProducoesController {
         return this.producoesService.listRegistrosInspecaoMontagem(id);
     }
 
+    @Get(':id/historico')
+    @ApiOperation({ summary: 'Listar o historico de alteracoes do equipamento'})
+    listHistorico(@Param('id') id: string) {
+        return this.producoesService.listHistorico(id);
+    }
+
     @Put(':id')
     @ApiOperation({ summary: 'Atualizar uma produção existente' })
     @ApiParam({
         name: 'id',
         example: '1',
     })
-    update(@Param('id') id: string, @Body() body: UpdateProducaoDto) {
-        return this.producoesService.update(id, body);
+    update(@Param('id') id: string, @Body() body: UpdateProducaoDto, @Req() req: any) {
+        return this.producoesService.update(id, body, req.user);
     }
 
     @Patch(':id/tag')

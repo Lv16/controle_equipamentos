@@ -6,6 +6,7 @@ import { CreateObservacaoDto } from './dto/create-observacao.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { UpdateRegistroInspecaoDto } from './dto/update-registro-inspecao.dto';
 import { Prisma, StatusProducao } from '@prisma/client';
+import { FilterProducaoDto } from './dto/filter-producao.dto';
 
 @Injectable()
 export class ProducoesService {
@@ -78,6 +79,18 @@ export class ProducoesService {
 
             : null,
         }
+    }
+
+    private formartarValor(value: unknown): string | null {
+        if (value === null || value === undefined) {
+            return null;
+        }
+
+        if (value instanceof Date) {
+            return value.toISOString();
+        }
+
+        return String(value);
     }
 
     async create(data: CreateProducaoDto) {
@@ -169,8 +182,42 @@ export class ProducoesService {
         }
     }
 
-    async findAll() {
-        const producoes = await this.prisma.equipment.findMany({
+    async findAll(filters: FilterProducaoDto) {
+       const where: Prisma.EquipmentWhereInput = {};
+
+       if (filters.numeroOrdem) {
+        where.numeroOrdem = filters.numeroOrdem;
+       }
+
+       if (filters.numeroSerie) {
+        where.numeroSerie = {
+            contains: filters.numeroSerie,
+            mode: 'insensitive',
+        };
+       }
+
+       if (filters.tag) {
+        where.tag = {
+            contains: filters.tag,
+            mode: 'insensitive',
+        };
+       }
+
+       if (filters.statusProducao) {
+        where.statusProducao = filters.statusProducao;
+       }
+
+       if (filters.tipoEquipamentoId) {
+        where.tipoEquipamentoId = filters.tipoEquipamentoId;
+       }
+
+       const page = filters.page ?? 1;
+       const limit = filters.limit ?? 10;
+       const skip = (page - 1) * limit;
+
+       const [data, total] = await Promise.all([
+        this.prisma.equipment.findMany({
+            where,
             include: {
                 tipoEquipamento: true,
                 itensSeriados: true,
@@ -182,15 +229,30 @@ export class ProducoesService {
                 registrosInspecaoMontagem: {
                     orderBy: {
                         ordem: 'asc',
-                    }
-                }
+                    },
+                },
+                historicoAlteracoes: {
+                    orderBy: {
+                        criadoEm: 'desc',
+                    },
+                },
             },
             orderBy: {
                 criadoEm: 'desc',
             },
-        });
+            skip,
+            take: limit,
+        }),
+        this.prisma.equipment.count({where})
+       ]);
 
-        return producoes.map((producao) => this.adicionarDiasProducao(producao));
+       return {
+        data: data.map((producao) => this.adicionarDiasProducao(producao)),
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+       };
     }
 
     async findOne(id: string) {
@@ -207,6 +269,11 @@ export class ProducoesService {
                 registrosInspecaoMontagem: {
                     orderBy: {
                         ordem: 'asc',
+                    },
+                },
+                historicoAlteracoes: {
+                    orderBy: {
+                        criadoEm: 'desc',
                     }
                 }
             },
@@ -243,7 +310,7 @@ export class ProducoesService {
         return this.adicionarDiasProducao(producao);
     }
 
-    async update(id: string, data: UpdateProducaoDto) {
+    async update(id: string, data: UpdateProducaoDto, user?: any) {
        const producaoAtual = await this.findOne(id);
        const tipoEquipamentoIdFinal = 
         data.tipoEquipamentoId ?? producaoAtual.tipoEquipamentoId ?? undefined;
@@ -270,7 +337,68 @@ export class ProducoesService {
         const descricaoComplementoFinal =
             data.descricaoComplemento ?? descricaoComplementoAtual;
 
+        const alteradoPor = 
+            user?.nome ||
+            user?.email ||
+            user?.username ||
+            null;
+
+        const historicoParaCriar: {
+            campo: string;
+            valorAnterior: string | null;
+            valorNovo: string | null;
+            alteradoPor: string | null;
+        }[] = [];
+
+        const camposMonitorados = {
+            tipoEquipamentoId: data.tipoEquipamentoId,
+            modelo: data.modelo,
+            descricao: data.descricaoComplemento,
+            statusProducao: data.statusProducao,
+            dataSolicitacao: data.dataSolicitacao ? new Date(data.dataSolicitacao) : undefined,
+            dataInicio: data.dataInicio ? new Date(data.dataInicio) : undefined,
+            dataTermino: data.dataTermino ? new Date(data.dataTermino) : undefined,
+            listaPecas: data.listaPecas,
+            sequenciaMontagem: data.sequenciaMontagem,
+            inspecaoMontagem: data.inspecaoMontagem,
+            historicoEquipamento: data.historicoEquipamento,
+            procedimentoTesteInspecaoMontagem: data.procedimentoTesteInspecaoMontagem,
+        };
+
+        for (const [campo, novoValor] of Object.entries(camposMonitorados)) {
+            if (novoValor === undefined) continue;
+
+            const valorAnterior =
+            campo === 'descricao'
+                ? producaoAtual.descricao
+                : (producaoAtual as any)[campo];
+            
+            const anteriorFormatado = this.formartarValor(valorAnterior);
+            const novoFormatado = this.formartarValor(novoValor);
+
+            if (anteriorFormatado !== novoFormatado) {
+                historicoParaCriar.push({
+                    campo,
+                    valorAnterior: anteriorFormatado,
+                    valorNovo: novoFormatado,
+                    alteradoPor
+                });
+            }
+        }
+
         try{
+            if (historicoParaCriar.length > 0) {
+                await this.prisma.historicoProducao.createMany({
+                    data: historicoParaCriar.map((item) => ({
+                        equipmentId: id,
+                        campo: item.campo,
+                        valorAnterior: item.valorAnterior,
+                        valorNovo: item.valorNovo,
+                        alteradoPor: item.alteradoPor,
+                    })),
+                });
+            }
+
             return this.prisma.equipment.update({
                 where: { id },
                 data: {
@@ -441,6 +569,18 @@ export class ProducoesService {
                 valorObservado: data.valorObservado,
                 instrumentoMedicao: data.instrumentoMedicao,
                 conformidades: data.conformidades,
+            },
+        });
+    }
+
+    async listHistorico(id: string) {
+        await this.findOne(id);
+        return this.prisma.historicoProducao.findMany({
+            where: {
+                equipmentId: id,
+            },
+            orderBy: {
+                criadoEm: 'desc',
             },
         });
     }
