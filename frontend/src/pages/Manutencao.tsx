@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { FormularioInspecaoManutencao } from '../components/FormularioInspecaoManutencao';
 import { InspecaoManutencao } from '../types/manutencao';
 import { usePdfExportManutencao } from '../hooks/usePdfExportManutencao';
 import { useManutencaoMock } from '../hooks/useManutencaoMock';
+import { useNavigate } from 'react-router-dom';
 import './Manutencao.css';
 
 interface SelectedInspecao {
@@ -10,12 +10,10 @@ interface SelectedInspecao {
   data: InspecaoManutencao;
 }
 
-type Modo = 'lista' | 'criar';
-
 export const Manutencao: React.FC = () => {
-  const [modo, setModo] = useState<Modo>('lista');
+  const navigate = useNavigate();
   const [selected, setSelected] = useState<SelectedInspecao | null>(null);
-  const { historico, adicionarInspecao } = useManutencaoMock();
+  const { historico } = useManutencaoMock();
   const { exportInspecaoToPdf } = usePdfExportManutencao();
 
   const handleSelectInspecao = (inspecao: InspecaoManutencao) => {
@@ -23,20 +21,6 @@ export const Manutencao: React.FC = () => {
       id: inspecao.id || '',
       data: inspecao,
     });
-  };
-
-  const handleSalvarInspecao = (inspecao: InspecaoManutencao) => {
-    const novoRegistro: InspecaoManutencao = {
-      ...inspecao,
-      id: Math.random().toString(36).substr(2, 9),
-      criadoEm: new Date().toISOString(),
-    };
-
-    adicionarInspecao(novoRegistro);
-    alert('Inspeção salva com sucesso!');
-    setModo('lista');
-
-    console.log('Inspeção salva:', novoRegistro);
   };
 
   const handleExportarPDF = async (inspecao: InspecaoManutencao) => {
@@ -48,15 +32,6 @@ export const Manutencao: React.FC = () => {
     }
   };
 
-  // Modo criar - mostrar formulário em página cheia
-  if (modo === 'criar') {
-    return (
-      <div className="manutencao-container">
-        <FormularioInspecaoManutencao onSalvar={handleSalvarInspecao} />
-      </div>
-    );
-  }
-
   // Modo lista - mostrar layout split
   return (
     <div className="manutencao-page">
@@ -64,7 +39,7 @@ export const Manutencao: React.FC = () => {
       
       <div className="page-toolbar">
         <button 
-          onClick={() => setModo('criar')}
+          onClick={() => navigate('/manutencao/criar')}
           className="btn-primary"
         >
           Nova Inspeção
