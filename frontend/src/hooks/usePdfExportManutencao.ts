@@ -98,7 +98,10 @@ export const usePdfExportManutencao = () => {
         itens.forEach((item) => {
           const checkboxSize = 3;
 
-          const linhas = pdf.splitTextToSize(item.titulo, maxWidth - 60);
+          const checkboxAreaWidth = 55; // espaço reservado à direita
+          const textWidth = maxWidth - checkboxAreaWidth;
+
+          const linhas = pdf.splitTextToSize(item.titulo, textWidth);
 
           const alturaBloco = linhas.length * 4 + 6;
           verificarNovaLinhaOuPagina(alturaBloco);
@@ -111,7 +114,7 @@ export const usePdfExportManutencao = () => {
           });
 
           // CHECKBOX
-          let xCheckbox = marginLeft + maxWidth - 55;
+          let xCheckbox = marginLeft + textWidth + 5;
           const yCheckbox = startY - 2;
 
           ['SIM', 'NAO', 'N/A'].forEach((option) => {
