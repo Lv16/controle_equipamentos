@@ -233,16 +233,32 @@ export const usePdfExportInspecao = () => {
 
             // RESULTADO DE INSPEÇÃO
             if (inspecao.resultadoFinal) {
-                checkPageBreak(20);
-                addSection('RESULTADO DE INSPEÇÃO');
-                pdf.setFontSize(11);
-                pdf.setFont(undefined, 'bold');
-                const color = inspecao.resultadoFinal === 'APROVADO' ? [76, 175, 80] : [244, 67, 54];
-                pdf.setTextColor(color[0], color[1], color[2]);
-                pdf.text(inspecao.resultadoFinal, marginLeft + 3, yPosition);
-                pdf.setTextColor(0, 0, 0);
-                yPosition += 10;
+                checkPageBreak(10);
+                // Seção removida conforme solicitação
             }
+
+            // ASSINATURA E APROVAÇÃO
+            checkPageBreak(25);
+            addSection('RESULTADO DA INSPEÇÃO');
+            
+            pdf.setFontSize(9);
+            pdf.setFont(undefined, 'normal');
+            
+            // Aprovado (lado esquerdo)
+            pdf.text('Aprovado:', marginLeft + 3, yPosition);
+            const aprovadoText = inspecao.aprovado ? 'SIM' : 'NÃO';
+            const aprovadoColor = inspecao.aprovado ? [76, 175, 80] : [244, 67, 54];
+            pdf.setTextColor(aprovadoColor[0], aprovadoColor[1], aprovadoColor[2]);
+            pdf.setFont(undefined, 'bold');
+            pdf.text(aprovadoText, marginLeft + 26, yPosition);
+            pdf.setTextColor(0, 0, 0);
+            pdf.setFont(undefined, 'normal');
+            
+            // Resultado (lado direito)
+            const signatureX = marginLeft + 100;
+            pdf.text('Resultado:', signatureX, yPosition);
+            pdf.setDrawColor(0, 0, 0);
+            pdf.line(signatureX + 25, yPosition + 1, signatureX + 70, yPosition + 1);
 
             pdf.save(filename);
         } catch (error) {
