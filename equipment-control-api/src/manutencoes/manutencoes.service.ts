@@ -11,6 +11,7 @@ import {
   StatusManutencao,
 } from '@prisma/client';
 import { CreateManutencaoSynchroDto } from './dto/create-manutencao-synchro.dto';
+import { CreateManutencaoDto } from './dto/create-manutencao.dto';
 import { UpdateManutencaoDto } from './dto/update-manutencao.dto';
 import { FilterManutencaoDto } from './dto/filter-manutencao.dto';
 
@@ -143,6 +144,28 @@ export class ManutencoesService {
         statusManutencao: StatusManutencao.PENDENTE,
       },
     });
+  }
+
+  async create(data: CreateManutencaoDto) {
+    const manutencao = await this.prisma.manutencao.create({
+      data: {
+        origem: OrigemManutencao.MANUAL,
+        tipoEquipamentoNome: data.tipoEquipamentoNome,
+        modeloEquipamento: data.modeloEquipamento,
+        numeroSerie: data.numeroSerie,
+        tag: data.tag,
+        situacaoEquipamento: data.situacaoEquipamento,
+        dataRetornoBase: data.dataRetornoBase
+          ? new Date(data.dataRetornoBase)
+          : null,
+        dataInicio: data.dataInicio ? new Date(data.dataInicio) : null,
+        diagnostico: data.diagnostico,
+        responsavelManutencao: data.responsavelManutencao,
+        statusManutencao: data.statusManutencao ?? StatusManutencao.EM_MANUTENCAO,
+      },
+    });
+
+    return this.adicionarDiasManutencao(manutencao);
   }
 
   async findAll(filters: FilterManutencaoDto) {

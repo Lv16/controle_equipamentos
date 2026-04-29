@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useProducoesMock } from '../hooks/useProducoesMock';
+import { useProducoes } from '../hooks/useProducoes';
 import { Producao, CreateProducaoDto } from '../types/producao';
 import { PdfExporter } from '../components/PdfExporter';
 import { FormularioOrdem } from '../components/FormularioOrdem';
@@ -11,7 +11,7 @@ interface SelectedProducao {
 }
 
 const OrdemProducao: React.FC = () => {
-  const { producoes, loading, error, criarProducao, atualizarProducao } = useProducoesMock();
+  const { producoes, loading, error, criarProducao, atualizarProducao } = useProducoes();
   const [selected, setSelected] = useState<SelectedProducao | null>(null);
   const [modo, setModo] = useState<'lista' | 'criar' | 'editar'>('lista');
 
@@ -22,18 +22,26 @@ const OrdemProducao: React.FC = () => {
     });
   };
 
-  const handleCriarOrdem = (novaProducao: CreateProducaoDto) => {
-    criarProducao(novaProducao);
-    setModo('lista');
-    alert('Ordem de produção criada com sucesso!');
+  const handleCriarOrdem = async (novaProducao: CreateProducaoDto) => {
+    try {
+      await criarProducao(novaProducao);
+      setModo('lista');
+      alert('Ordem de producao criada com sucesso!');
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Erro ao criar ordem de producao');
+    }
   };
 
-  const handleEditarOrdem = (producaoAtualizada: Producao | CreateProducaoDto) => {
+  const handleEditarOrdem = async (producaoAtualizada: Producao | CreateProducaoDto) => {
     if (selected && 'id' in producaoAtualizada) {
-      atualizarProducao(selected.id, producaoAtualizada as Producao);
-      setSelected(null);
-      setModo('lista');
-      alert('Ordem de produção atualizada com sucesso!');
+      try {
+        await atualizarProducao(selected.id, producaoAtualizada as Producao);
+        setSelected(null);
+        setModo('lista');
+        alert('Ordem de producao atualizada com sucesso!');
+      } catch (err: any) {
+        alert(err.response?.data?.message || 'Erro ao atualizar ordem de producao');
+      }
     }
   };
 
@@ -69,22 +77,22 @@ const OrdemProducao: React.FC = () => {
 
   return (
     <div className="producao-page">
-      <h2>Ordem de Produção</h2>
-      
+      <h2>Ordem de Producao</h2>
+
       <div className="page-toolbar">
-        <button 
+        <button
           onClick={() => setModo('criar')}
           className="btn-primary"
         >
-          Gerar Ordem de Produção
+          Gerar Ordem de Producao
         </button>
       </div>
-      
+
       <div className="page-content">
         <div className="page-list-section">
-          <h3>Produções ({producoes.length})</h3>
+          <h3>Producoes ({producoes.length})</h3>
           {producoes.length === 0 ? (
-            <p>Nenhuma produção encontrada</p>
+            <p>Nenhuma producao encontrada</p>
           ) : (
             <ul className="page-list">
               {producoes.map((producao: Producao) => (
@@ -107,11 +115,11 @@ const OrdemProducao: React.FC = () => {
               <h2>Detalhes da Ordem</h2>
               <div className="page-detail-grid">
                 <div className="detail-item">
-                  <label>Número Ordem:</label>
+                  <label>Numero Ordem:</label>
                   <p>{selected.data.numeroOrdem}</p>
                 </div>
                 <div className="detail-item">
-                  <label>Série:</label>
+                  <label>Serie:</label>
                   <p>{selected.data.numeroSerie}</p>
                 </div>
                 <div className="detail-item">
@@ -119,12 +127,12 @@ const OrdemProducao: React.FC = () => {
                   <p>{selected.data.modelo}</p>
                 </div>
                 <div className="detail-item">
-                  <label>Data Solicitação:</label>
+                  <label>Data Solicitacao:</label>
                   <p>{selected.data.dataSolicitacao}</p>
                 </div>
               </div>
               <div className="detail-item full">
-                <label>Descrição:</label>
+                <label>Descricao:</label>
                 <p>{selected.data.descricao}</p>
               </div>
 
@@ -135,7 +143,7 @@ const OrdemProducao: React.FC = () => {
                     <div key={item.id} className="doc-item">
                       <strong>Item {item.numero}</strong>
                       <p>{item.descricao}</p>
-                      {item.numeroSerie && <small>Série: {item.numeroSerie}</small>}
+                      {item.numeroSerie && <small>Serie: {item.numeroSerie}</small>}
                     </div>
                   ))}
                 </div>
@@ -154,21 +162,19 @@ const OrdemProducao: React.FC = () => {
 
               {selected.data.observacoes && (
                 <div className="documents-section">
-                  <h3>Observações Adicionais</h3>
+                  <h3>Observacoes Adicionais</h3>
                   <p>{selected.data.observacoes}</p>
                 </div>
               )}
 
               <div className="action-buttons">
-                <button 
+                <button
                   onClick={() => setModo('editar')}
                   className="btn-secondary"
                 >
                   Editar
                 </button>
-                <PdfExporter 
-                  producao={selected.data}
-                />
+                <PdfExporter producao={selected.data} />
               </div>
             </div>
           ) : (

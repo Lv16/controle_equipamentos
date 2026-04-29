@@ -4,6 +4,8 @@ import './App.css';
 import './pages/Producao.css';
 import Header from './components/Layout/Header';
 import Navbar from './components/Layout/Navbar';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import Login from './pages/Login';
 import Producao from './pages/Producao';
 import OrdemProducao from './pages/OrdemProducao';
 import InspecaoMontagem from './pages/InspecaoMontagem';
@@ -19,17 +21,16 @@ function App() {
         <Navbar />
 
         <Routes>
-          <Route path="/producao" element={<Producao><Outlet /></Producao>}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/producao" element={<ProtectedRoute><Producao><Outlet /></Producao></ProtectedRoute>}>
             <Route path="ordem" element={<OrdemProducao />} />
             <Route path="inspecao" element={<InspecaoMontagem />} />
             <Route path="historico" element={<HistoricoEquipamento />} />
             <Route index element={<Navigate to="/producao/ordem" replace />} />
           </Route>
-          <Route path="/" element={<Producao><Outlet /></Producao>}>
-            <Route index element={<Navigate to="/producao/ordem" replace />} />
-          </Route>
-          <Route path="/manutencao" element={<Manutencao />} />
-          <Route path="/manutencao/criar" element={<NovaManutencao />} />
+          <Route path="/" element={<Navigate to="/producao/ordem" replace />} />
+          <Route path="/manutencao" element={<ProtectedRoute><Manutencao /></ProtectedRoute>} />
+          <Route path="/manutencao/criar" element={<ProtectedRoute><NovaManutencao /></ProtectedRoute>} />
         </Routes>
       </div>
     </BrowserRouter>

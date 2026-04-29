@@ -13,6 +13,7 @@ import {
 import { ApiBearerAuth, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ManutencoesService } from './manutencoes.service';
 import { CreateManutencaoSynchroDto } from './dto/create-manutencao-synchro.dto';
+import { CreateManutencaoDto } from './dto/create-manutencao.dto';
 import { UpdateManutencaoDto } from './dto/update-manutencao.dto';
 import { SynchroIntegrationGuard } from '../auth/synchro-integration.guard';
 import { FilterManutencaoDto } from './dto/filter-manutencao.dto';
@@ -33,6 +34,14 @@ export class ManutencoesController {
   @ApiOperation({ summary: 'Criar manutenção automaticamente a partir do Synchro' })
   createFromSynchro(@Body() body: CreateManutencaoSynchroDto) {
     return this.manutencoesService.createFromSynchro(body);
+  }
+
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Criar manutencao manualmente' })
+  create(@Body() body: CreateManutencaoDto) {
+    return this.manutencoesService.create(body);
   }
 
   @Get()

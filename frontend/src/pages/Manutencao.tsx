@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { InspecaoManutencao } from '../types/manutencao';
 import { usePdfExportManutencao } from '../hooks/usePdfExportManutencao';
-import { useManutencaoMock } from '../hooks/useManutencaoMock';
+import { useManutencoes } from '../hooks/useManutencoes';
 import { useNavigate } from 'react-router-dom';
 import './Manutencao.css';
 
@@ -13,7 +13,7 @@ interface SelectedInspecao {
 export const Manutencao: React.FC = () => {
   const navigate = useNavigate();
   const [selected, setSelected] = useState<SelectedInspecao | null>(null);
-  const { historico } = useManutencaoMock();
+  const { historico, loading, error } = useManutencoes();
   const { exportInspecaoToPdf } = usePdfExportManutencao();
 
   const handleSelectInspecao = (inspecao: InspecaoManutencao) => {
@@ -32,7 +32,9 @@ export const Manutencao: React.FC = () => {
     }
   };
 
-  // Modo lista - mostrar layout split
+  if (loading) return <div className="container"><p>Carregando...</p></div>;
+  if (error) return <div className="container error"><p>Erro: {error}</p></div>;
+
   return (
     <div className="manutencao-page">
       <h2>Manutenção</h2>

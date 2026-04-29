@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '../../services/authService';
 import './Navbar.css';
 
 const Navbar: React.FC = () => {
@@ -9,19 +10,31 @@ const Navbar: React.FC = () => {
     navigate(path, { replace: true });
   };
 
+  const handleLogout = () => {
+    authService.logout();
+    navigate('/login', { replace: true });
+  };
+
   return (
     <nav className="navbar">
       <ul>
         <li>
           <button onClick={() => handleNavigate('/producao')} className="nav-link">
-            Produção
+            Producao
           </button>
         </li>
         <li>
           <button onClick={() => handleNavigate('/manutencao')} className="nav-link">
-            Manutenção
+            Manutencao
           </button>
         </li>
+        {authService.isAuthenticated() && (
+          <li>
+            <button onClick={handleLogout} className="nav-link">
+              Sair
+            </button>
+          </li>
+        )}
       </ul>
     </nav>
   );
