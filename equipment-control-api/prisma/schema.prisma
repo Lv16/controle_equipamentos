@@ -70,6 +70,7 @@ model ItemSeriado {
 
 enum StatusProducao {
   PROGRAMADA
+  PARALISADA
   EM_ANDAMENTO
   CONCLUIDA
 }
@@ -125,6 +126,7 @@ enum OrigemManutencao {
 
 enum StatusManutencao {
   PENDENTE
+  PARALISADA
   EM_MANUTENCAO
   CONCLUIDA
 }
