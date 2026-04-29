@@ -231,19 +231,6 @@ export const usePdfExportInspecao = () => {
                 yPosition += 3;
             }
 
-            // RESULTADO DE INSPEÇÃO
-            if (inspecao.resultadoFinal) {
-                checkPageBreak(20);
-                addSection('RESULTADO DE INSPEÇÃO');
-                pdf.setFontSize(11);
-                pdf.setFont(undefined, 'bold');
-                const color = inspecao.resultadoFinal === 'APROVADO' ? [76, 175, 80] : [244, 67, 54];
-                pdf.setTextColor(color[0], color[1], color[2]);
-                pdf.text(inspecao.resultadoFinal, marginLeft + 3, yPosition);
-                pdf.setTextColor(0, 0, 0);
-                yPosition += 10;
-            }
-
             pdf.save(filename);
         } catch (error) {
             console.error('Erro ao exportar PDF:', error);
