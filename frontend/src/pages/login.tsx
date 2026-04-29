@@ -63,6 +63,9 @@ export default function Login() {
         <div className="login-logo">
           <img src={logo} alt="Logo" className="logo-img" />
         </div>
+        <div className="axis-brand">
+          <h2 className="axis-text">AXIS</h2>
+        </div>
 
         <h1 className="login-title">Bem-vindo!</h1>
         <p className="login-subtitle">Acesse sua conta para continuar</p>
