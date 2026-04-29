@@ -254,9 +254,9 @@ export const usePdfExportInspecao = () => {
             pdf.setTextColor(0, 0, 0);
             pdf.setFont(undefined, 'normal');
             
-            // Assinatura (lado direito)
+            // Resultado (lado direito)
             const signatureX = marginLeft + 100;
-            pdf.text('Assinatura:', signatureX, yPosition);
+            pdf.text('Resultado:', signatureX, yPosition);
             pdf.setDrawColor(0, 0, 0);
             pdf.line(signatureX + 25, yPosition + 1, signatureX + 70, yPosition + 1);
 
