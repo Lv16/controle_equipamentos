@@ -16,7 +16,9 @@ model Equipment {
   numeroOrdem                       Int                                       @unique @default(autoincrement())
   numeroSerie                       String?   
   tag                               String?                                   @unique
-  dataSolicitacao                   DateTime? 
+  dataSolicitacao                   DateTime?
+  solicitante                       String?   
+
   dataInicio                        DateTime?
   dataTermino                       DateTime?
   statusProducao                    StatusProducao                            @default(PROGRAMADA)  
@@ -38,6 +40,9 @@ model Equipment {
   observacoes                       ObservacaoProducao[]
   registrosInspecaoMontagem         RegistroInspecaoMontagem[]
   historicoAlteracoes               HistoricoProducao[]
+
+  ativo                             Boolean           @default(true)
+  excluidoEm                        DateTime?         
 }
 
 model HistoricoProducao {
@@ -145,6 +150,9 @@ model Manutencao {
   criadoEm                DateTime            @default(now())
   atualizadoEm            DateTime            @updatedAt
   historicoAlteracoes     HistoricoManutencao[]
+
+  ativo                   Boolean           @default(true)
+  excluidoEm              DateTime?         
   
   @@index([numeroSerie])
   @@index([tag])

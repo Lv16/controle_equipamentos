@@ -146,7 +146,9 @@ export class ManutencoesService {
   }
 
   async findAll(filters: FilterManutencaoDto) {
-    const where: Prisma.ManutencaoWhereInput = {};
+    const where: Prisma.ManutencaoWhereInput = {
+      ativo: true,
+    };
 
     if (filters.statusManutencao) {
       where.statusManutencao = filters.statusManutencao;
@@ -209,7 +211,10 @@ export class ManutencoesService {
 
   async findOne(id: string) {
     const manutencao = await this.prisma.manutencao.findUnique({
-      where: { id },
+      where: { 
+        id, 
+        ativo: true 
+      },
       include: {
         historicoAlteracoes: {
           orderBy: {
@@ -306,8 +311,12 @@ export class ManutencoesService {
   async remove(id: string) {
     await this.findOne(id);
 
-    return this.prisma.manutencao.delete({
+    return this.prisma.manutencao.update({
       where: { id },
+      data: {
+        ativo: false,
+        excluidoEm: new Date(),
+      },
     });
   }
 

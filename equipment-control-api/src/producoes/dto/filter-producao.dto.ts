@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { StatusProducao } from '@prisma/client';
 import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { IsEnum, IsIn, IsInt, IsOptional, IsString, Min } from 'class-validator';
 import { PaginationProducaoDto } from './pagination-producao.dto';
 
 export class FilterProducaoDto extends PaginationProducaoDto {
@@ -39,5 +39,44 @@ export class FilterProducaoDto extends PaginationProducaoDto {
     @IsOptional()
     @IsString()
     tipoEquipamentoId?: string;
+
+    @ApiPropertyOptional({
+        example: 'criadoEm',
+        enum: [
+            'criadoEm',
+            'dataSolicitacao',
+            'dataInicio',
+            'dataTermino',
+            'numeroOrdem',
+            'modelo',
+            'statusProducao',
+        ],
+    })
+    @IsOptional()
+    @IsIn([
+        'criadoEm',
+        'dataSolicitacao',
+        'dataInicio',
+        'dataTermino',
+        'numeroOrdem',
+        'modelo',
+        'statusProducao',
+    ])
+    sortBy?:
+    |'criadoEm'
+    |'dataSolicitacao'
+    |'dataInicio'
+    |'dataTermino'
+    |'numeroOrdem'
+    |'modelo'
+    |'statusProducao';
+
+    @ApiPropertyOptional({
+        example: 'desc',
+        enum: ['asc', 'desc'],
+    })
+    @IsOptional()
+    @IsIn(['asc', 'desc'])
+    sortOrder?: 'asc' | 'desc';
 }
 

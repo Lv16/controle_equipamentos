@@ -55,12 +55,13 @@ export class ProducoesService {
         fim.setHours(0, 0, 0, 0);
 
         const diffMs = fim.getTime() - inicio.getTime();
-        const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
 
         return diffDias >= 1 ? diffDias: 1;
     }
 
     private adicionarDiasProducao<T extends {
+        dataSolicitacao?: Date | null;
         dataInicio?: Date | null;
         dataTermino?: Date | null;
         statusProducao?: string | null;
@@ -71,6 +72,13 @@ export class ProducoesService {
 
         return {
             ...producao,
+
+            diasSolicitacao: this.calcularDiasProducao(
+                producao.dataSolicitacao ?? null,
+                producao.dataInicio ?? null,
+
+            ),
+  
             diasProducao: deveCalcular
             ? this.calcularDiasProducao(
                 producao.dataInicio ?? null,
@@ -78,7 +86,7 @@ export class ProducoesService {
             )
 
             : null,
-        }
+        };
     }
 
     private formartarValor(value: unknown): string | null {
@@ -113,6 +121,7 @@ export class ProducoesService {
                 dataSolicitacao: data.dataSolicitacao
                 ? new Date(data.dataSolicitacao)
                 : null,
+                solicitante: data.solicitante,
                 dataInicio: data.dataInicio
                 ? new Date(data.dataInicio)
                 : null,
@@ -183,7 +192,9 @@ export class ProducoesService {
     }
 
     async findAll(filters: FilterProducaoDto) {
-       const where: Prisma.EquipmentWhereInput = {};
+       const where: Prisma.EquipmentWhereInput = {
+            ativo: true,
+        } ;
 
        if (filters.numeroOrdem) {
         where.numeroOrdem = filters.numeroOrdem;
@@ -214,6 +225,8 @@ export class ProducoesService {
        const page = filters.page ?? 1;
        const limit = filters.limit ?? 10;
        const skip = (page - 1) * limit;
+       const sortBy = filters.sortBy ?? 'criadoEm';
+       const sortOrder = filters.sortOrder ?? 'desc';
 
        const [data, total] = await Promise.all([
         this.prisma.equipment.findMany({
@@ -238,7 +251,7 @@ export class ProducoesService {
                 },
             },
             orderBy: {
-                criadoEm: 'desc',
+                [sortBy]: sortOrder,
             },
             skip,
             take: limit,
@@ -257,7 +270,10 @@ export class ProducoesService {
 
     async findOne(id: string) {
         const producao = await this.prisma.equipment.findUnique({
-            where: { id },
+            where: { 
+                id, 
+                ativo: true 
+            },
             include: {
                 tipoEquipamento: true,
                 itensSeriados: true,
@@ -356,6 +372,7 @@ export class ProducoesService {
             descricao: data.descricaoComplemento,
             statusProducao: data.statusProducao,
             dataSolicitacao: data.dataSolicitacao ? new Date(data.dataSolicitacao) : undefined,
+            solicitante: data.solicitante,
             dataInicio: data.dataInicio ? new Date(data.dataInicio) : undefined,
             dataTermino: data.dataTermino ? new Date(data.dataTermino) : undefined,
             listaPecas: data.listaPecas,
@@ -587,8 +604,12 @@ export class ProducoesService {
 
     async remove(id: string) {
         await this.findOne(id);
-        return this.prisma.equipment.delete({
+        return this.prisma.equipment.update({
             where: { id },
+            data: {
+                ativo: false,
+                excluidoEm: new Date(),
+            },
         });
     }
 }
